@@ -1,0 +1,11 @@
+{
+  "name": "portfolio-risk-architect",
+  "version": "0.1.0",
+  "description": "วินิจฉัย & ออกแบบความเสี่ยงพอร์ต multi-asset แบบ look-through (capital weight ≠ risk weight). Skill + agent + 9 simulation commands. เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล. เรียบเรียงจาก Earthh Evans · Invest Hub.",
+  "repository": "https://github.com/mrunknown2/Earthh-Evans-Finance-Skill",
+  "license": "MIT",
+  "author": {
+    "name": "mrunknown2"
+  },
+  "keywords": ["portfolio", "risk", "diversification", "correlation", "risk-contribution", "stress-test", "monte-carlo", "multi-asset", "asset-allocation"]
+}
