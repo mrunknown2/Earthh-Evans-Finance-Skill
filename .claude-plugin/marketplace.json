@@ -17,6 +17,13 @@
       "description": "Portfolio Risk Architect — วินิจฉัยความเสี่ยงพอร์ต multi-asset (Equity/ETF/Crypto) แบบ look-through: capital weight ≠ risk weight, overlap, concentration, correlation, risk contribution, tail-risk stress test, gap analysis + recommendation. 9 simulation commands. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
       "version": "0.1.0",
       "keywords": ["finance", "investing", "portfolio", "risk", "diversification", "correlation", "risk-contribution", "multi-asset", "stress-test", "monte-carlo", "asset-allocation", "earth-evans"]
+    },
+    {
+      "name": "deep-o-stock-analyst",
+      "source": "./plugins/deep-o-stock-analyst",
+      "description": "Deep-O Stock Analyst — วิเคราะห์หุ้นรายตัว (US) ด้วยกรอบ DEEP+O (Demand/Execution/Economics/Price/Optionality) สไตล์ Damodaran + McKinsey: live-data check, Damodaran DCF → intrinsic value, reverse DCF, option-adjusted valuation, DEEP score 0–100 → verdict ซื้อ/ถือ/ลด/ขาย. 10 commands. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+      "version": "0.1.0",
+      "keywords": ["finance", "investing", "stock", "equity", "valuation", "dcf", "damodaran", "deep-o", "intrinsic-value", "reverse-dcf", "hedge-fund", "earth-evans"]
     }
   ]
 }
