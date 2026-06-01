@@ -1,0 +1,8 @@
+# Source material ดิบของ Earth Evans — เก็บ local เท่านั้น ไม่ track เข้า repo
+source/
+
+# macOS
+.DS_Store
+
+# Backup files (จาก /misc:inject-mugi ฯลฯ)
+*.bak.*
