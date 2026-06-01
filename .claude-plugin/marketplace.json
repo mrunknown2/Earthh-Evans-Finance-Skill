@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "earthh-evans-finance",
+  "owner": {
+    "name": "mrunknown2",
+    "email": "noreply@example.com"
+  },
+  "metadata": {
+    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. Plugin แรก: portfolio-risk-architect (วินิจฉัย & ออกแบบความเสี่ยงพอร์ต multi-asset). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
+    "version": "0.1.0",
+    "pluginRoot": "./"
+  },
+  "plugins": [
+    {
+      "name": "portfolio-risk-architect",
+      "source": "./plugins/portfolio-risk-architect",
+      "description": "Portfolio Risk Architect — วินิจฉัยความเสี่ยงพอร์ต multi-asset (Equity/ETF/Crypto) แบบ look-through: capital weight ≠ risk weight, overlap, concentration, correlation, risk contribution, tail-risk stress test, gap analysis + recommendation. 9 simulation commands. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+      "version": "0.1.0",
+      "keywords": ["finance", "investing", "portfolio", "risk", "diversification", "correlation", "risk-contribution", "multi-asset", "stress-test", "monte-carlo", "asset-allocation", "earth-evans"]
+    }
+  ]
+}
