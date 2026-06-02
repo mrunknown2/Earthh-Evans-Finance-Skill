@@ -26,12 +26,13 @@ model: opus
 **MANDATORY MACRO CHECK ก่อนทุกครั้ง:**
 - WebSearch `"economic calendar today FOMC CPI NFP"` — ถ้ามี print ก่อน 08:00 UTC → force SKIP (No-Trade Rule #1) หยุดทันที
 - WebSearch `"BTC price now"` — sanity-check ราคาในรูปว่าไม่ใช่รูปเก่า
+- ถ้าผลค้นหากำกวมเรื่องเวลา event → **WebFetch** เปิดหน้าปฏิทินเศรษฐกิจสาธารณะ (เช่น ForexFactory) confirm เวลาเทียบ settle 15:00 TH (เฉพาะหน้าที่ไม่ต้อง login)
 
 **เดิน 6-step ตาม agent framework:**
 1. **Snapshot** — อ่านตัวเลขดิบจากรูปทั้ง 5 (OI, Funding, Liq, IV/HV ratio, trend direction)
 2. **8-Check** — ตรวจ 8 เงื่อนไขตาม framework (ดู `agents/btc-short-premium.md`)
 3. **No-Trade Rules** — ผ่านกรอง Critical Rules ทุกข้อก่อน; ติดข้อใดข้อหนึ่ง → SKIP
-4. **Combination Read** — อ่าน Call/Put side เทียบกัน → เลือก leg ที่ edge ดีกว่า
+4. **Combination Read** — อ่าน Price + Volume + OI + Liquidation **พร้อมกัน** หา pattern (4 patterns ใน framework) → ใช้ pattern ตัดสิน Call/Put side ที่ aligned
 5. **Verdict** — TRADE / SKIP / WAIT (commit เสมอ ห้าม "it depends")
 6. **Action** — ถ้า TRADE: ระบุ strike / size (% port) / entry premium / SL ที่ Index Price ตาม framework
 

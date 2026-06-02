@@ -20,12 +20,12 @@ model: opus
 
 **คำนวณ SD (Standard Deviation Distance):**
 
-สูตร (§9.7): **SD = Spot × IV × √(1/365)**
+สูตร (ดู `STRIKE SELECTION` ใน agent): **SD = Spot × IV × √(1/365)**
 
 แสดงการแทนค่าให้ชัด เช่น:
 > Spot $74,000 · IV 30% → SD = 74,000 × 0.30 × √(1/365) ≈ **$1,162**
 
-**เลือก strike ตาม regime** (§9.4):
+**เลือก strike ตาม regime** (ดู `STRIKE SELECTION` ใน agent):
 
 | Regime | Liquidation Level | Strike Distance | Delta | Size |
 |--------|-------------------|----------------|-------|------|

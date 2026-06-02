@@ -25,7 +25,7 @@ model: opus
 - WebSearch `"economic calendar today FOMC CPI NFP"` — ถ้ามี print ก่อน 08:00 UTC → ❌ Force SKIP (No-Trade Rule #1) หยุดทันที ไม่เดิน check ต่อ
 - WebSearch `"BTC price now"` — sanity-check ราคาในรูปว่าไม่ใช่รูปเก่า
 
-**เดิน 8-Check Framework ทีละข้อ** (§9.1) แสดง ✅/❌ + ค่าจริง:
+**เดิน 8-Check Framework ทีละข้อ** (ดู `8-CHECK FRAMEWORK` ใน agent) แสดง ✅/❌ + ค่าจริง:
 
 | # | Check | เกณฑ์ผ่าน | ค่าจริง | ผล |
 |---|-------|-----------|---------|-----|
@@ -38,7 +38,7 @@ model: opus
 | 7 | ATR Filter | Strike > 1.5× ATR 4H | — | ✅/❌ |
 | 8 | Combination Read | ไม่ติด pattern อันตราย | — | ✅/❌ |
 
-**เดิน No-Trade Rules 7 ข้อ** (§9.2) flag ข้อที่ติด:
+**เดิน No-Trade Rules 7 ข้อ** (ดู `NO-TRADE RULES` ใน agent) flag ข้อที่ติด:
 
 1. FOMC/CPI/NFP day → SKIP
 2. IV < HV (ratio < 1.0) → SKIP
@@ -64,4 +64,4 @@ model: opus
 
 ## Discipline
 
-อ้างค่าจริงจากรูปทุก check · ห้าม approximate หรือกุข้อมูลแทนรูป · ถ้า Liq > $200M = FAIL ทันที (Critical Rule §9.5) · สรุป pass/fail commit ทิศทาง ห้าม "it depends" · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล
+อ้างค่าจริงจากรูปทุก check · ห้าม approximate หรือกุข้อมูลแทนรูป · ถ้า Liq > $200M = FAIL ทันที (ดู `CRITICAL RULES` ใน agent) · สรุป pass/fail commit ทิศทาง ห้าม "it depends" · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล

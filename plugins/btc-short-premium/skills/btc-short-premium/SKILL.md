@@ -1,11 +1,11 @@
 ---
 name: btc-short-premium
 description: >
-  Use when ... BTC daily option, short premium, ขาย call/put เก็บ premium, Bybit
-  option, IV/HV ratio, combination read, funding rate, liquidation, pin risk, theta
-  decay, strike selection, short call, short put, SD distance, No-Trade gate,
-  option checklist, position management, mark price anomaly ... → route ไป command
-  ที่เหมาะ. เชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.
+  Use when the user discusses BTC daily options, short premium, ขาย call/put เก็บ
+  premium, Bybit option, IV/HV ratio, combination read, funding rate, liquidation,
+  pin risk, theta decay, strike selection, short call, short put, SD distance,
+  No-Trade gate, option checklist, position management, mark price anomaly — route
+  ไป command ที่เหมาะ. เชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.
 ---
 
 # BTC Short Premium
@@ -34,7 +34,7 @@ description: >
 
 ## Critical Rules — AI ห้าม override
 
-กฎเหล่านี้ยกมาจาก §9.5 (System Prompt Critical Rules) — ไม่มีข้อยกเว้น:
+กฎเหล่านี้ยกมาจาก `CRITICAL RULES` ใน agent `btc-short-premium` — ไม่มีข้อยกเว้น:
 
 - **Liquidation > $200M** = SKIP เสมอ ไม่ว่า setup ดูดีแค่ไหน
 - **Liquidation $50–200M** = caution · ลด size 30–50%
