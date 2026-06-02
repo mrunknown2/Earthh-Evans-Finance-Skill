@@ -6,8 +6,8 @@
     "email": "noreply@example.com"
   },
   "metadata": {
-    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. Plugin แรก: portfolio-risk-architect (วินิจฉัย & ออกแบบความเสี่ยงพอร์ต multi-asset). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
-    "version": "0.1.0",
+    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 3 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
+    "version": "0.2.0",
     "pluginRoot": "./"
   },
   "plugins": [
@@ -24,6 +24,13 @@
       "description": "Deep-O Stock Analyst — วิเคราะห์หุ้นรายตัว (US) ด้วยกรอบ DEEP+O (Demand/Execution/Economics/Price/Optionality) สไตล์ Damodaran + McKinsey: live-data check, Damodaran DCF → intrinsic value, reverse DCF, option-adjusted valuation, DEEP score 0–100 → verdict ซื้อ/ถือ/ลด/ขาย. 10 commands. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
       "version": "0.1.0",
       "keywords": ["finance", "investing", "stock", "equity", "valuation", "dcf", "damodaran", "deep-o", "intrinsic-value", "reverse-dcf", "hedge-fund", "earth-evans"]
+    },
+    {
+      "name": "btc-short-premium",
+      "source": "./plugins/btc-short-premium",
+      "description": "BTC Short Premium — Senior Option Trader desk สำหรับ Bybit BTC Daily Options (ขาย Call/Put รายวันเก็บ premium). วิเคราะห์ 6 ขั้นจากรูป 5 ภาพ (CoinGlass/OptionChain/D-4H-1H) → TRADE/SKIP/WAIT พร้อม strike/size/entry/SL(Index Price). 8-Check + No-Trade Rules + Combination Read + Critical Rules. agent + 9 commands + skill. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+      "version": "0.1.0",
+      "keywords": ["finance", "btc", "bitcoin", "option", "short-premium", "theta", "bybit", "daily-option", "iv-hv", "combination-read", "pin-risk", "earth-evans"]
     }
   ]
 }
