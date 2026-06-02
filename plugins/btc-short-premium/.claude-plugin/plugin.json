@@ -1,0 +1,9 @@
+{
+  "name": "btc-short-premium",
+  "version": "0.1.0",
+  "description": "Senior Option Trader desk — Bybit BTC Daily Short Premium (ขาย Call/Put รายวันเก็บ premium). วิเคราะห์ 6 ขั้นจากรูป 5 ภาพ → TRADE/SKIP/WAIT พร้อม strike/size/entry/SL(Index Price). agent + 9 commands + skill. เชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล. เรียบเรียงจาก Earthh Evans · Invest Hub.",
+  "repository": "https://github.com/mrunknown2/Earthh-Evans-Finance-Skill",
+  "license": "MIT",
+  "author": { "name": "mrunknown2" },
+  "keywords": ["btc","bitcoin","option","short-premium","theta","bybit","daily-option","iv-hv","combination-read","pin-risk","earth-evans"]
+}
