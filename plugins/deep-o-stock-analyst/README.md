@@ -10,7 +10,10 @@
 |---|---|---|
 | 🧩 Skill | `deep-o-stock-analyst` | กรอบ DEEP+O + valuation mechanics (auto-trigger เมื่อคุยเรื่องวิเคราะห์หุ้น/มูลค่าหุ้น) |
 | 🤖 Agent | `deep-o-stock-analyst` | subagent บทบาท Hedge Fund Equity Research Partner (เรียกผ่าน Agent tool) |
+| ⚙️ Engine | `scripts/valuation_engine.py` | คำนวณ WACC / DCF intrinsic value / reverse DCF (terminal-anchored) / DEEP score แบบ **deterministic** (stdlib ล้วน) — โมเดล**ไม่ปั้นเลขเรื่องเงิน** |
 | ⚡ Commands | 10 คำสั่ง | `/full` `/livecheck` `/wacc` `/valuation` `/reversedcf` `/options` `/deep` `/risk` `/catalysts` `/onepager` |
+
+> 🔢 **ตัวเลข valuation ทุกตัวมาจาก engine ที่รันจริง ไม่ใช่ LLM ประเมิน** — DEEP score normalize เป็น 0–100 จริง · reverse DCF เป็น terminal-anchored (สูตรเดียวกับ [`reverse-dcf-screener`](../reverse-dcf-screener/)). schema + สูตร: [`skills/deep-o-stock-analyst/references/engine.md`](skills/deep-o-stock-analyst/references/engine.md)
 
 ## ติดตั้ง
 
@@ -18,6 +21,8 @@
 /plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill
 /plugin install deep-o-stock-analyst
 ```
+
+ต้องมี **Python 3** เพื่อรัน engine — **ไม่ต้อง `pip install`** (stdlib ล้วน)
 
 ## ใช้งาน
 

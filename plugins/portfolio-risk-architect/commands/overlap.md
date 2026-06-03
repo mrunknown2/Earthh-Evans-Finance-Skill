@@ -2,7 +2,6 @@
 description: "heatmap ความซ้ำซ้อนระหว่างกอง — ชี้ที่ 'ซื้อซ้ำ'"
 allowed-tools:
   - Read
-  - Write
 model: opus
 ---
 

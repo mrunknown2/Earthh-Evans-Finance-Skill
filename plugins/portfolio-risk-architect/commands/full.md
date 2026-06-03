@@ -2,7 +2,7 @@
 description: "รัน workflow วินิจฉัยพอร์ตครบ 8 ขั้น + ภาพหลัก (X-Ray, Risk Contribution, Stress) — เหมาะเริ่มต้น"
 allowed-tools:
   - Read
-  - Write
+  - Bash
 model: opus
 ---
 
@@ -23,9 +23,16 @@ model: opus
 เดิน **Diagnostic Workflow 8 ขั้น** ตามลำดับ:
 1. Portfolio X-Ray (Look-Through) → 2. Overlap → 3. Concentration → 4. Correlation & True Diversification → 5. Risk Contribution → 6. Tail Risk & Stress → 7. Gap Analysis → 8. Recommendation Framework (3 ระดับ)
 
+ขั้น **3–6 (concentration / correlation / risk contribution / stress) ตัวเลขต้องมาจาก `portfolio_engine.py`** (deterministic) — รัน mode `all` ครั้งเดียวได้ครบ แล้วเล่าผล (ห้ามประเมินเลขเอง):
+```bash
+echo '{"mode":"all","seed":42,"assets":[{"name":"VOO","weight":0.3,"vol":0.16,"mu":0.08}, ...],"correlation":[[1,...],...],"scenarios":[{"name":"GFC 2008","shocks":{...}}, ...]}' \
+  | python3 "${CLAUDE_PLUGIN_ROOT}/skills/portfolio-risk-architect/scripts/portfolio_engine.py"
+```
+(schema เต็ม: `skills/portfolio-risk-architect/references/engine.md`)
+
 แล้วตอบตาม **Output Structure**: Snapshot → ภาพลวงตา vs ความจริง → Concentration → Correlation → Risk Contribution → Stress → Gap → Recommendation → Trade-offs → Bottom Line
 
-พร้อมภาพหลัก: X-Ray treemap, Capital vs Risk Contribution bar chart, Stress drawdown
+พร้อมภาพหลัก: X-Ray treemap, Capital vs Risk Contribution bar chart (จาก `weight` vs `rc_pct`), Stress drawdown
 
 ## ตัวอย่างสั่ง
 

@@ -4,6 +4,7 @@ allowed-tools:
   - Read
   - WebSearch
   - WebFetch
+  - Bash
 model: opus
 ---
 
@@ -28,13 +29,15 @@ model: opus
 - WebSearch `"BTC price now"` — sanity-check ราคาในรูปว่าไม่ใช่รูปเก่า
 - ถ้าผลค้นหากำกวมเรื่องเวลา event → **WebFetch** เปิดหน้าปฏิทินเศรษฐกิจสาธารณะ (เช่น ForexFactory) confirm เวลาเทียบ settle 15:00 TH (เฉพาะหน้าที่ไม่ต้อง login)
 
-**เดิน 6-step ตาม agent framework:**
+**IMAGE COMPLETENESS GATE:** ขาดภาพใด/อ่านค่าสำคัญ (spot, IV, HV, liq, funding, delta, premium) ไม่ออก → **WAIT/SKIP ห้ามเดาแล้วออก TRADE** (ดู agent framework)
+
+**เดิน 6-step ตาม agent framework** (เลขเชิงปริมาณรันผ่าน `btc_calc.py` — SD/IV-HV/size/pin — ไม่คิดในหัว):
 1. **Snapshot** — อ่านตัวเลขดิบจากรูปทั้ง 5 (OI, Funding, Liq, IV/HV ratio, trend direction)
-2. **8-Check** — ตรวจ 8 เงื่อนไขตาม framework (ดู `agents/btc-short-premium.md`)
+2. **8-Check** — ตรวจ 8 เงื่อนไขตาม framework (ดู `agents/btc-short-premium.md`); SD (`mode:sd`) + IV/HV (`mode:iv_hv`) ผ่าน `${CLAUDE_PLUGIN_ROOT}/skills/btc-short-premium/scripts/btc_calc.py`
 3. **No-Trade Rules** — ผ่านกรอง Critical Rules ทุกข้อก่อน; ติดข้อใดข้อหนึ่ง → SKIP
 4. **Combination Read** — อ่าน Price + Volume + OI + Liquidation **พร้อมกัน** หา pattern (4 patterns ใน framework) → ใช้ pattern ตัดสิน Call/Put side ที่ aligned
 5. **Verdict** — TRADE / SKIP / WAIT (commit เสมอ ห้าม "it depends")
-6. **Action** — ถ้า TRADE: ระบุ strike / size (% port) / entry premium / SL ที่ Index Price ตาม framework
+6. **Action** — ถ้า TRADE: strike / **size** (margin-at-risk, default 0.5–1% ผ่าน `btc_calc.py` mode `size`) / entry premium / SL ที่ Index Price (ขาดทุนจริงไม่ cap ที่ 2× premium) ตาม framework
 
 อ้างกฎและ threshold จาก agent framework — ไม่ redefine ตัวเลขเอง
 

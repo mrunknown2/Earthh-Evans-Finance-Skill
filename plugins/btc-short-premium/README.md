@@ -4,6 +4,10 @@
 
 > ระบบนี้เป็น **vision-based** — user แคปรูป 5 ภาพส่งให้ AI อ่าน ไม่ใช่ดึงข้อมูล real-time อัตโนมัติ
 
+> 🔢 **ตัวเลขเชิงปริมาณ (SD distance · IV/HV gate · position sizing · pin) รันผ่าน `scripts/btc_calc.py`** (deterministic, stdlib · ต้องมี Python 3 ไม่ต้อง pip) — โมเดลอ่านรูป + ตัดสิน, engine คำนวณ. schema: [`skills/btc-short-premium/references/btc-calc.md`](skills/btc-short-premium/references/btc-calc.md)
+>
+> ⚠️ **ความเสี่ยงสูงสุดในชุดนี้:** ขาย naked option บน leverage — **ขาดทุนเกิน premium ได้ไม่จำกัด** · บัญชีถูก force-liquidate ได้ก่อน SL ที่ Index Price จะถึง · ภาพไม่ครบ = WAIT ห้ามเดา verdict · เริ่ม size **0.5–1%** จน paper-trade ≥ 2 สัปดาห์ผ่าน
+
 ## เครื่องมือที่ต้องมี
 
 | เครื่องมือ | หน้าที่ |

@@ -4,6 +4,7 @@ allowed-tools:
   - WebSearch
   - WebFetch
   - Read
+  - Bash
 model: opus
 ---
 
@@ -23,11 +24,12 @@ model: opus
   - **E — Economics** (ROIC − WACC, EVA, SGR, leverage)
   - **P — Price** (Reverse DCF: ราคาฝัง expectation อะไร)
   - **O — Optionality** (มูลค่าแฝง)
-- ถ่วงน้ำหนักเป็น **0–100**:
-
-```
-น้ำหนัก: D 25 / E(exec) 20 / E(econ) 20 / P 20 / O 15
-```
+- **normalize → 0–100** ด้วย engine (ห้ามคูณดิบ — score×weight จะเต็ม 500 ทำให้เกณฑ์ ≥80 เอื้อมไม่ถึง):
+  ```bash
+  echo '{"mode":"deep","scores":{"demand":<0-5>,"execution":<0-5>,"economics":<0-5>,"price":<0-5>,"optionality":<0-5>}}' \
+    | python3 "${CLAUDE_PLUGIN_ROOT}/skills/deep-o-stock-analyst/scripts/valuation_engine.py"
+  ```
+  engine คำนวณ `total = Σ(scoreᵢ/5 × weightᵢ)` (น้ำหนัก D25/E20/E20/P20/O15 รวม 100) → คืน `total`, `contributions`, `verdict_band`, `signal`
 
 | คะแนน | สัญญาณ | คำแนะนำ |
 |-------|--------|---------|
@@ -36,7 +38,7 @@ model: opus
 | 40–59 | 🟠 | ลดน้ำหนัก |
 | < 40 | 🔴 | ขาย |
 
-→ **Verdict + Confidence 0–5** + เหตุผล 3 บรรทัด
+→ **Verdict + Confidence 0–5** + เหตุผล 3 บรรทัด · **tie-break:** ถ้า P (Price) ต่ำ (หุ้นแพง) แม้ D/E/O สูง → verdict ห้ามเขียว ระบุ "ธุรกิจดีแต่ราคาแพง"
 
 ## ตัวอย่างสั่ง
 

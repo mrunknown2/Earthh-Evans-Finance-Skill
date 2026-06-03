@@ -2,6 +2,7 @@
 description: "Position Check — position เปิดอยู่ → hold/close/adjust + TP zone"
 allowed-tools:
   - Read
+  - Bash
 model: opus
 ---
 
@@ -23,7 +24,14 @@ model: opus
 - ตัดสิน **1 ใน 4 action:** hold ต่อ / ปิดกำไร (TP) / ปิดขาดทุน (SL) / adjust (roll/hedge)
 - บอก **trigger ที่ต้องระวัง** — เช่น ถ้า BTC ขึ้น/ลงถึง X → exit ทันที
 - ระบุ **TP zone** — premium เหลือ % เท่าไรของ entry premium ควรปิด (ดู threshold จาก agent framework)
-- อ้าง SL method จาก agent framework — SL = Index Price ไม่ใช่ Mark Price
+- อ้าง SL method จาก agent framework — SL = Index Price ไม่ใช่ Mark Price · **ขาดทุนจริงไม่ cap ที่ 2× premium** (tail ไม่จำกัด)
+- **IV/HV gate + sizing รันผ่าน engine** (deterministic):
+  ```bash
+  echo '{"mode":"iv_hv","iv":<IV>,"hv":<HV>}' | python3 "${CLAUDE_PLUGIN_ROOT}/skills/btc-short-premium/scripts/btc_calc.py"
+  echo '{"mode":"size","equity":<E>,"risk_pct":0.01,"premium_per_contract":<prem>,"max_loss_mult":3}' \
+    | python3 "${CLAUDE_PLUGIN_ROOT}/skills/btc-short-premium/scripts/btc_calc.py"
+  ```
+  `size` คืน `margin_at_risk`, `max_contracts`, `above_default_band` (เตือนถ้า risk_pct > 1%)
 
 อ้างกฎและ threshold จาก `agents/btc-short-premium.md` — ไม่ redefine ตัวเลขเอง
 
