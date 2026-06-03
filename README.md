@@ -11,8 +11,9 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 | [`portfolio-risk-architect`](plugins/portfolio-risk-architect) | วินิจฉัย & ออกแบบความเสี่ยง **พอร์ตรวม** multi-asset (Equity/ETF/Crypto) — look-through, risk contribution, correlation, stress test, Monte Carlo, frontier, rebalance | 1 skill + 1 agent + **9 commands** |
 | [`deep-o-stock-analyst`](plugins/deep-o-stock-analyst) | วิเคราะห์ **หุ้นรายตัว (US)** ด้วยกรอบ **DEEP+O** (Demand/Execution/Economics/Price/Optionality) สไตล์ Damodaran + McKinsey — DCF → intrinsic value, reverse DCF, option-adjusted valuation, DEEP score → verdict ซื้อ/ถือ/ลด/ขาย | 1 skill + 1 agent + **10 commands** |
 | [`btc-short-premium`](plugins/btc-short-premium) | เดสก์ **BTC Daily Short Premium** บน Bybit (ขาย Call/Put รายวันเก็บ premium) — วิเคราะห์ 6 ขั้นจาก **รูป 5 ภาพ** (CoinGlass / Option Chain / TradingView D-4H-1H) → **TRADE/SKIP/WAIT** + strike/size/entry/SL (Index Price) · 8-Check · No-Trade Rules · Combination Read · Pin risk | 1 skill + 1 agent + **9 commands** |
+| [`reverse-dcf-screener`](plugins/reverse-dcf-screener) | ถอดความคาดหวังที่ราคาฝัง — **Terminal-Anchored Reverse DCF** หุ้นถูก/แพง + โซนราคา — **Market-Implied CAGR** เทียบ **Plausible CAGR** → Gap → ถูก/Fair/แพง + โซนราคา 4 ระดับ · กรอกงบจริงลง Excel template + verify 2 รอบ · portable (Claude Code/Codex/Antigravity) | 1 skill + 1 agent + **9 commands** |
 
-> สามตัว **เสริมกัน ไม่ทับหน้าที่**: `deep-o-stock-analyst` เจาะหุ้นเดี่ยว (US equity) · `portfolio-risk-architect` มองความเสี่ยงทั้งพอร์ต multi-asset · `btc-short-premium` เดสก์เทรด crypto options รายวัน (vision-based)
+> สี่ตัว **เสริมกัน ไม่ทับหน้าที่**: `deep-o-stock-analyst` เจาะหุ้นเดี่ยว (US equity) · `portfolio-risk-architect` มองความเสี่ยงทั้งพอร์ต multi-asset · `btc-short-premium` เดสก์เทรด crypto options รายวัน (vision-based) · `reverse-dcf-screener` วัด "ความคาดหวัง" ที่ราคาฝัง (expectation investing) ผ่าน Excel engine
 
 ## ติดตั้ง
 
@@ -21,6 +22,7 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 /plugin install portfolio-risk-architect
 /plugin install deep-o-stock-analyst
 /plugin install btc-short-premium
+/plugin install reverse-dcf-screener
 ```
 
 ## คำสั่งโดยย่อ
@@ -40,7 +42,12 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 /full · /quick · /position · /compare · /verify · /anomaly · /pin · /strike · /checklist
 ```
 
-รายละเอียดแต่ละคำสั่งดูใน README ของ plugin: [portfolio-risk-architect](plugins/portfolio-risk-architect/README.md) · [deep-o-stock-analyst](plugins/deep-o-stock-analyst/README.md) · [btc-short-premium](plugins/btc-short-premium/README.md)
+**reverse-dcf-screener** — เริ่มที่ `/full <ticker>`
+```
+/full · /analyze · /verify · /zones · /quick · /screener · /wacc · /sensitivity · /methodology
+```
+
+รายละเอียดแต่ละคำสั่งดูใน README ของ plugin: [portfolio-risk-architect](plugins/portfolio-risk-architect/README.md) · [deep-o-stock-analyst](plugins/deep-o-stock-analyst/README.md) · [btc-short-premium](plugins/btc-short-premium/README.md) · [reverse-dcf-screener](plugins/reverse-dcf-screener/README.md)
 
 ## เพิ่ม skill ใหม่ (จาก source ถัดไป)
 
@@ -56,6 +63,7 @@ plugins/
   portfolio-risk-architect/          # skill + agent + 9 commands
   deep-o-stock-analyst/              # skill + agent + 10 commands
   btc-short-premium/                 # skill + agent + 9 commands
+  reverse-dcf-screener/              # skill + agent + 9 commands (Excel engine)
 source/                              # source material ดิบ (gitignored)
 docs/superpowers/                    # spec + implementation plan ของแต่ละ plugin
 ```
