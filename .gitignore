@@ -1,6 +1,10 @@
 # Source material ดิบของ Earth Evans — เก็บ local เท่านั้น ไม่ track เข้า repo
 source/
 
+# Internal design docs (specs + implementation plans) — เอกสารออกแบบภายใน
+# public repo ไม่ต้องมี · ย้ายมาจาก docs/superpowers เดิม · เก็บ local เท่านั้น
+design/
+
 # macOS
 .DS_Store
 
