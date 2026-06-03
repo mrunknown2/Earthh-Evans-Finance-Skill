@@ -3,6 +3,7 @@ description: "Pre-Trade Gate — 8-Check Framework + No-Trade Rules ทีละ
 allowed-tools:
   - Read
   - WebSearch
+  - Bash
 model: opus
 ---
 
@@ -25,7 +26,9 @@ model: opus
 - WebSearch `"economic calendar today FOMC CPI NFP"` — ถ้ามี print ก่อน 08:00 UTC → ❌ Force SKIP (No-Trade Rule #1) หยุดทันที ไม่เดิน check ต่อ
 - WebSearch `"BTC price now"` — sanity-check ราคาในรูปว่าไม่ใช่รูปเก่า
 
-**เดิน 8-Check Framework ทีละข้อ** (ดู `8-CHECK FRAMEWORK` ใน agent) แสดง ✅/❌ + ค่าจริง:
+**IMAGE COMPLETENESS GATE ก่อน:** ขาดภาพ/อ่านค่าสำคัญไม่ออก → WAIT ขอภาพเพิ่ม ไม่เดิน check ต่อด้วยค่าเดา
+
+**เดิน 8-Check Framework ทีละข้อ** (ดู `8-CHECK FRAMEWORK` ใน agent) แสดง ✅/❌ + ค่าจริง · Check #2 (IV/HV) + #3 (SD) รันผ่าน `${CLAUDE_PLUGIN_ROOT}/skills/btc-short-premium/scripts/btc_calc.py` (mode `iv_hv` / `sd`) ไม่คิดในหัว:
 
 | # | Check | เกณฑ์ผ่าน | ค่าจริง | ผล |
 |---|-------|-----------|---------|-----|
@@ -41,12 +44,12 @@ model: opus
 **เดิน No-Trade Rules 7 ข้อ** (ดู `NO-TRADE RULES` ใน agent) flag ข้อที่ติด:
 
 1. FOMC/CPI/NFP day → SKIP
-2. IV < HV (ratio < 1.0) → SKIP
+2. IV/HV < 1.15 → SKIP (< 1.0 = hard floor ห้ามขาย)
 3. BTC rallied 5%+ วันก่อน → SKIP
 4. ขาดทุน 3 ครั้งติด → หยุด 2–3 วัน
-5. Active liquidation > $200M → SKIP
-6. Funding < −0.03% → SKIP Short Call
-7. Gut uncertainty → SKIP
+5. Active liquidation ≥ $150M → SKIP (pre-cascade) · > $200M = cascade
+6. Funding < −0.03% → SKIP Short Call · > +0.03% → SKIP Short Put
+7. Gut uncertainty / ภาพไม่ครบ → SKIP/WAIT
 
 **สรุป pass/fail gate:**
 - ผ่านทั้ง 8-Check และ 7 No-Trade Rules → **PASS — เดิน /full ต่อได้**

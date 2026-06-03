@@ -2,6 +2,7 @@
 description: "Strike Selection — เลือก strike ตาม regime + คำนวณ SD distance + delta"
 allowed-tools:
   - Read
+  - Bash
 model: opus
 ---
 
@@ -18,12 +19,15 @@ model: opus
 
 ## สิ่งที่ทำ
 
-**คำนวณ SD (Standard Deviation Distance):**
+**คำนวณ SD (Standard Deviation Distance) — รันผ่าน engine ห้ามคิดเลขเอง:**
 
-สูตร (ดู `STRIKE SELECTION` ใน agent): **SD = Spot × IV × √(1/365)**
+```bash
+echo '{"mode":"sd","spot":74000,"strike":<strike>,"iv":0.30,"days":1}' \
+  | python3 "${CLAUDE_PLUGIN_ROOT}/skills/btc-short-premium/scripts/btc_calc.py"
+```
+คืน `daily_sd`, `sd` (กี่ SD ห่าง spot), `passes_1_5` (ต้อง true จึงผ่าน Check #3)
 
-แสดงการแทนค่าให้ชัด เช่น:
-> Spot $74,000 · IV 30% → SD = 74,000 × 0.30 × √(1/365) ≈ **$1,162**
+> Spot $74,000 · IV 30% → daily_sd ≈ **$1,162** · strike $76,000 → 1.72 SD ✅
 
 **เลือก strike ตาม regime** (ดู `STRIKE SELECTION` ใน agent):
 
