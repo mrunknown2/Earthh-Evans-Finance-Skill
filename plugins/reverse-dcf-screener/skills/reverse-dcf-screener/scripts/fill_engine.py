@@ -163,8 +163,11 @@ def main():
         if parent:
             os.makedirs(parent, exist_ok=True)
         path, row, globals_eff = append_screener(d, screener_path)
-        # recompute with the file's effective globals so the chat table matches Excel recalc
-        res = compute({**d, **globals_eff})
+        # recompute with the file's effective globals so the chat table matches Excel recalc.
+        # The Screener sheet has NO consensus/forward column — its Cap A is hist*fade only —
+        # so drop forward CAGR here (fwd=0) to stay in parity with what Excel will show.
+        # (The single-stock Engine sheet keeps forward via C50; only the master table omits it.)
+        res = compute({**d, **globals_eff, "consensus_fy1": None})
         res["screener_file"] = path
         res["screener_row"] = row
         res["screener_globals"] = globals_eff

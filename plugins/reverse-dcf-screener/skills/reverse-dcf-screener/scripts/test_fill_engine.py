@@ -80,6 +80,30 @@ def test_screener_appends_two_rows():
         shutil.rmtree(d)
 
 
+def test_screener_chat_drops_forward_cagr():
+    # The Screener sheet has NO consensus/forward column — its Cap A formula is
+    # hist*fade only. So in screener mode the chat result must drop forward CAGR
+    # (compute with fwd=0) to match what Excel recalcs. Here forward (1.8/1.0-1=0.80)
+    # is far above hist (0.10); with forward kept, plausible would be ~0.34, but the
+    # Screener sheet would show hist*fade = 0.10*0.70 = 0.07.
+    FWD_HEAVY = {
+        "ticker": "FWDX", "revenue_r0": 1.0, "ev": 20.0, "sector": "Software",
+        "wacc": 0.09, "terminal_margin": 0.30, "terminal_g": 0.04, "terminal_roic": 0.15,
+        "tax": 0.25, "horizon_n": 10, "hist_cagr": 0.10, "fade": 0.70, "tam": 100.0,
+        "max_pen": 0.25, "abs_ceiling": 0.45, "buffer": 0.05, "net_debt": 0.0,
+        "shares_m": 100.0, "consensus_fy1": 1.8,  # forward = 0.80 >> hist 0.10
+    }
+    d = tempfile.mkdtemp()
+    try:
+        sf = os.path.join(d, "screener.xlsx")
+        r = run({**FWD_HEAVY, "screener_file": sf})
+        # file globals: fade=0.70 -> Cap A = hist*fade = 0.07 (forward must be dropped)
+        assert approx(r["plausible_cagr"], 0.07, tol=0.01), r["plausible_cagr"]
+        assert approx(r["cap_a"], 0.07, tol=0.01), r["cap_a"]
+    finally:
+        shutil.rmtree(d)
+
+
 def test_screener_keeps_formula_cols_intact():
     d = tempfile.mkdtemp()
     try:
