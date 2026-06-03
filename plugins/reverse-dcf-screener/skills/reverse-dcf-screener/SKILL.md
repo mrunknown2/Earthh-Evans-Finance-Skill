@@ -43,11 +43,36 @@ description: >
 
 ---
 
-## วิธีใช้ข้าม IDE
+## รัน Engine (portable — ทุก IDE)
 
-skill package นี้ **portable** — ใช้ได้ทั้ง Claude Code / Antigravity / Codex ผ่าน `SKILL.md` + `references/` + `scripts/fill_engine.py` ชุดเดียวกัน · วิธีติดตั้งต่อ IDE (รวม dependency `openpyxl` + เตือน Codex เปิด network) ดู **`INSTALL.md`**
+skill package นี้ **portable** — `SKILL.md` + `references/` + `scripts/fill_engine.py` ชุดเดียว ใช้ได้ทั้ง Claude Code / Claude Desktop / Codex / Antigravity · การติดตั้งต่อ platform (path + dependency `openpyxl` + เปิด network ของ Codex) ดู **`INSTALL.md`**
+
+**เรียก engine โดยตรง** (ไม่พึ่ง slash command / subagent) — ส่ง JSON ทาง stdin:
+
+```bash
+echo '<JSON>' | python3 scripts/fill_engine.py      # รันจากโฟลเดอร์ skill
+# เรียกด้วย full path ก็ได้ — engine resolve template (../assets) relative กับตัวเอง ไม่พึ่ง CWD
+```
+
+**JSON input** (คีย์หลัก): `ticker, revenue_r0, ev, terminal_margin, terminal_g, terminal_roic, tax, horizon_n, hist_cagr, fade, tam, max_pen, abs_ceiling, buffer, net_debt, shares_m` · ออปชัน: `wacc` (override), `consensus_fy1` (forward CAGR), `price`
+**JSON output** (คีย์หลัก): `implied_cagr, plausible_cagr, gap, verdict, zones{strong_buy,fair_value,caution_low,caution_high,red_flag}, cap_a, cap_b, cap_c, ev_sales`
+
+**โหมด:**
+- `"no_write": true` → คำนวณ verdict/zones อย่างเดียว **ไม่เขียนไฟล์** (ไม่ต้องมี openpyxl)
+- ปกติ → เขียน `analyses/<TICKER>_<วันที่>.xlsx` (ต้องมี openpyxl)
+- `"screener_file": "analyses/screener.xlsx"` → append ลง master Screener (เขียนเฉพาะ input cols)
 
 ---
+
+## Workflow (เมื่อไม่มี subagent / slash command)
+
+บน platform ที่ไม่มี subagent ของ Claude Code ให้ทำ 3 สเต็ปนี้ในเซสชันเดียว (เนื้อหาเดียวกับ agent `reverse-dcf-screener`):
+
+1. **Analyze** — ดึงงบจริงล่าสุด (10-K / 10-Q / IR · ราคา + shares + net debt + EV วันนี้ · consensus FY+1) ตาม `references/prompt.md` → ประกอบ JSON → รัน engine (stdin) → อ่าน Implied/Plausible/Gap/Verdict
+2. **Verify (รอบ 2 บังคับ — BLOCKING)** — ไล่เช็คทุกตัวเลขจากงบอีกรอบ (revenue R0, EV, margin, ROIC, shares, net debt, consensus) เจอเพี้ยน → แก้ JSON → rerun engine
+3. **Zones** — อ่านผลที่ verify แล้ว → สรุปโซนราคา 4 ระดับ ว่าราคาจริงตกโซนไหน
+
+> ข้อบังคับ (เหมือน Critical Rules ด้านบน): ไม่กุข้อมูล · ใส่ WACC จริงเป็น override · source note + as-of date ทุกค่า · ตรวจ Terminal-Anchored fit ก่อนรัน
 
 ## Disclaimer
 
