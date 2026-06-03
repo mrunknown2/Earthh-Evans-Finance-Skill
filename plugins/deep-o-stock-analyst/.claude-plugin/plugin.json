@@ -1,6 +1,6 @@
 {
   "name": "deep-o-stock-analyst",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "วิเคราะห์หุ้นรายตัว (US) ด้วยกรอบ DEEP+O (Demand/Execution/Economics/Price/Optionality) สไตล์ Damodaran + McKinsey — ออก verdict ซื้อ/ถือ/ลด/ขาย แบบตรวจสอบได้ พร้อม intrinsic value, reverse DCF, option-adjusted valuation. Skill + agent + 10 commands. เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล. เรียบเรียงจาก Earthh Evans · Invest Hub.",
   "repository": "https://github.com/mrunknown2/Earthh-Evans-Finance-Skill",
   "license": "MIT",

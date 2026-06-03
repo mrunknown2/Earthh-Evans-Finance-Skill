@@ -1,6 +1,6 @@
 {
   "name": "reverse-dcf-screener",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reverse DCF Screener — Terminal-Anchored: ถอดความคาดหวังที่ราคาฝัง → Market-Implied CAGR เทียบ Plausible CAGR → หุ้นถูก/แพง + โซนราคาน่าสะสม. กรอก Excel template + verify 2 รอบ. portable (Claude Code/Codex/Antigravity). เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
   "repository": "https://github.com/mrunknown2/Earthh-Evans-Finance-Skill",
   "license": "MIT",
