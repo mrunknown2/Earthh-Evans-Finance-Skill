@@ -12,8 +12,9 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 | [`deep-o-stock-analyst`](plugins/deep-o-stock-analyst) | วิเคราะห์ **หุ้นรายตัว (US)** ด้วยกรอบ **DEEP+O** (Demand/Execution/Economics/Price/Optionality) สไตล์ Damodaran + McKinsey — DCF → intrinsic value, reverse DCF, option-adjusted valuation, DEEP score → verdict ซื้อ/ถือ/ลด/ขาย | 1 skill + 1 agent + **10 commands** |
 | [`btc-short-premium`](plugins/btc-short-premium) | เดสก์ **BTC Daily Short Premium** บน Bybit (ขาย Call/Put รายวันเก็บ premium) — วิเคราะห์ 6 ขั้นจาก **รูป 5 ภาพ** (CoinGlass / Option Chain / TradingView D-4H-1H) → **TRADE/SKIP/WAIT** + strike/size/entry/SL (Index Price) · 8-Check · No-Trade Rules · Combination Read · Pin risk | 1 skill + 1 agent + **9 commands** |
 | [`reverse-dcf-screener`](plugins/reverse-dcf-screener) | ถอดความคาดหวังที่ราคาฝัง — **Terminal-Anchored Reverse DCF** หุ้นถูก/แพง + โซนราคา — **Market-Implied CAGR** เทียบ **Plausible CAGR** → Gap → ถูก/Fair/แพง + โซนราคา 4 ระดับ · กรอกงบจริงลง Excel template + verify 2 รอบ · portable (Claude Code/Codex/Antigravity) | 1 skill + 1 agent + **9 commands** |
+| [`fundamental-checklist`](plugins/fundamental-checklist) | ตรวจสุขภาพหุ้น **15 มิติ** ด้วย **Damodaran Companion Variables** — Justified P/E, EV/Sales, EV/EBITDA, P/B, PEG, FCF Yield + Quick Screen 60 วิ + Red Flag system → **Scorecard: STRONG / REVIEW / AVOID** · Python 3 stdlib only (ไม่ต้อง pip install) · portable | 1 skill + 1 agent + **10 commands** |
 
-> สี่ตัว **เสริมกัน ไม่ทับหน้าที่**: `deep-o-stock-analyst` เจาะหุ้นเดี่ยว (US equity) · `portfolio-risk-architect` มองความเสี่ยงทั้งพอร์ต multi-asset · `btc-short-premium` เดสก์เทรด crypto options รายวัน (vision-based) · `reverse-dcf-screener` วัด "ความคาดหวัง" ที่ราคาฝัง (expectation investing) ผ่าน Excel engine
+> ห้าตัว **เสริมกัน ไม่ทับหน้าที่**: `fundamental-checklist` ตรวจสุขภาพหุ้น 15 มิติ (breadth, gate filter) · `deep-o-stock-analyst` เจาะหุ้นเดี่ยว (US equity, depth) · `portfolio-risk-architect` มองความเสี่ยงทั้งพอร์ต multi-asset · `btc-short-premium` เดสก์เทรด crypto options รายวัน (vision-based) · `reverse-dcf-screener` วัด "ความคาดหวัง" ที่ราคาฝัง (expectation investing) ผ่าน Excel engine
 
 ## Deterministic engines — เลขเงินไม่เดา
 
@@ -25,8 +26,9 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 | deep-o-stock-analyst | `valuation_engine.py` | WACC (CAPM), DCF, terminal-anchored reverse DCF, DEEP score (0–100) | 12 |
 | btc-short-premium | `btc_calc.py` | daily SD, SD distance, IV/HV gate, position sizing, pin distance | 8 |
 | reverse-dcf-screener | `fill_engine.py` | Terminal-Anchored implied CAGR, plausible-CAGR caps, price zones, Excel fill/append | 10 |
+| fundamental-checklist | `checklist_engine.py` | Justified Multiple 6 ตัว (P/E, EV/Sales, EV/EBITDA, P/B, PEG, FCF Yield), Quick Screen gate, Red Flag scoring, Scorecard logic | 17 |
 
-> รวม **48 known-answer tests** (เลขคำนวณด้วยมือ) ผ่านทั้งหมด · seeded → reproducible · Excel เก็บสูตรไว้ให้ recalc เองตอนเปิด
+> รวม **60 known-answer tests** (เลขคำนวณด้วยมือ) ผ่านทั้งหมด · seeded → reproducible · Excel เก็บสูตรไว้ให้ recalc เองตอนเปิด
 
 ## ติดตั้ง
 
@@ -36,6 +38,7 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 /plugin install deep-o-stock-analyst
 /plugin install btc-short-premium
 /plugin install reverse-dcf-screener
+/plugin install fundamental-checklist
 ```
 
 ## คำสั่งโดยย่อ
@@ -60,7 +63,12 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 /full · /analyze · /verify · /zones · /quick · /screener · /wacc · /sensitivity · /methodology
 ```
 
-รายละเอียดแต่ละคำสั่งดูใน README ของ plugin: [portfolio-risk-architect](plugins/portfolio-risk-architect/README.md) · [deep-o-stock-analyst](plugins/deep-o-stock-analyst/README.md) · [btc-short-premium](plugins/btc-short-premium/README.md) · [reverse-dcf-screener](plugins/reverse-dcf-screener/README.md)
+**fundamental-checklist** — เริ่มที่ `/full <ticker>`
+```
+/full · /screen · /companion · /business · /financials · /capital · /quality · /risk · /casestudy · /methodology
+```
+
+รายละเอียดแต่ละคำสั่งดูใน README ของ plugin: [portfolio-risk-architect](plugins/portfolio-risk-architect/README.md) · [deep-o-stock-analyst](plugins/deep-o-stock-analyst/README.md) · [btc-short-premium](plugins/btc-short-premium/README.md) · [reverse-dcf-screener](plugins/reverse-dcf-screener/README.md) · [fundamental-checklist](plugins/fundamental-checklist/README.md)
 
 📖 **คู่มือใช้งานเต็ม (playbook) รายปลั๊กอิน** — ติดตั้ง → เตรียมข้อมูล → คำสั่ง → อ่านผลลัพธ์ → ข้อควรระวัง: [`docs/`](docs/README.md)
 
@@ -80,6 +88,7 @@ plugins/
   deep-o-stock-analyst/              # skill + agent + 10 commands + engine
   btc-short-premium/                 # skill + agent + 9 commands + engine
   reverse-dcf-screener/              # skill + agent + 9 commands + Excel engine
+  fundamental-checklist/             # skill + agent + 10 commands + stdlib engine
 docs/                                # playbook สาธารณะ รายปลั๊กอิน (track เข้า repo)
 design/                              # เอกสารออกแบบภายใน specs+plans (gitignored — ไม่ push)
 source/                              # source material ดิบ Earth Evans (gitignored)
@@ -88,6 +97,11 @@ source/                              # source material ดิบ Earth Evans (gi
 ## Changelog
 
 รูปแบบอิง [Keep a Changelog](https://keepachangelog.com) · เวอร์ชันอ้างอิง **marketplace** (แต่ละ plugin มีเวอร์ชันของตัวเองใน `plugin.json`)
+
+### [0.5.0] — 2026-06-04
+**fundamental-checklist — ปลั๊กอินที่ 5**
+- เพิ่ม **fundamental-checklist**: ตรวจสุขภาพหุ้นครบ 15 มิติด้วย Damodaran Companion Variables (Justified P/E, EV/Sales, EV/EBITDA, P/B, PEG, FCF Yield) + Quick Screen 60 วิ + Red Flag system → Scorecard STRONG/REVIEW/AVOID · Python 3 stdlib only (ไม่ต้อง pip install) · 10 commands
+- เพิ่ม `checklist_engine.py` + 12 known-answer tests · รวม engine tests ทั้งหมด **60 tests**
 
 ### [0.4.0] — 2026-06-03
 **Deterministic engines + ความถูกต้องเชิงตัวเลข (review remediation)**

@@ -6,8 +6,8 @@
     "email": "annochan@gmail.com"
   },
   "metadata": {
-    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 4 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium), reverse-dcf-screener (Terminal-Anchored reverse DCF ถอดความคาดหวังที่ราคาฝัง → หุ้นถูก/แพง + โซนราคา). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
-    "version": "0.4.0",
+    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 5 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium), reverse-dcf-screener (Terminal-Anchored reverse DCF ถอดความคาดหวังที่ราคาฝัง → หุ้นถูก/แพง + โซนราคา), fundamental-checklist (ตรวจสุขภาพหุ้น 15 มิติ + Damodaran Companion Variables + scorecard). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
+    "version": "0.5.0",
     "pluginRoot": "./"
   },
   "plugins": [
@@ -38,6 +38,13 @@
       "description": "Reverse DCF Screener — Terminal-Anchored: ถอดความคาดหวังที่ราคาฝัง → Market-Implied CAGR เทียบ Plausible CAGR → หุ้นถูก/แพง + โซนราคาน่าสะสม. กรอก Excel template + verify 2 รอบ. portable (Claude Code/Codex/Antigravity). เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
       "version": "0.2.0",
       "keywords": ["finance", "investing", "stock", "valuation", "reverse-dcf", "terminal-anchored", "implied-cagr", "expectation-investing", "damodaran", "excel", "screener", "earth-evans"]
+    },
+    {
+      "name": "fundamental-checklist",
+      "source": "./plugins/fundamental-checklist",
+      "description": "Fundamental Checklist — ตรวจสุขภาพหุ้นครบ 15 มิติด้วย Damodaran Companion Variables (Justified P/E, EV/Sales, EV/EBITDA, P/B, PEG, FCF Yield) + Quick Screen 60 วิ + Red Flag system → scorecard ผ่านกี่มิติ/ติด red flag ตรงไหน. portable (Claude Code/Codex/Antigravity). เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+      "version": "0.1.0",
+      "keywords": ["finance", "investing", "stock", "fundamental-analysis", "checklist", "companion-variables", "damodaran", "justified-multiple", "roic", "wacc", "moat", "red-flag", "due-diligence", "earth-evans"]
     }
   ]
 }

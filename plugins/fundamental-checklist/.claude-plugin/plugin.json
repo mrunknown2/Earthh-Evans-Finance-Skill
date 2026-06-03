@@ -1,0 +1,9 @@
+{
+  "name": "fundamental-checklist",
+  "version": "0.1.0",
+  "description": "Fundamental Checklist — ตรวจสุขภาพหุ้นครบ 15 มิติด้วย Damodaran Companion Variables (Justified P/E, EV/Sales, EV/EBITDA, P/B, PEG, FCF Yield) + Quick Screen 60 วิ + Red Flag system → scorecard ผ่านกี่มิติ/ติด red flag ตรงไหน. portable (Claude Code/Codex/Antigravity). เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+  "repository": "https://github.com/mrunknown2/earthh-evans-finance-skill",
+  "license": "MIT",
+  "author": { "name": "mrunknown2" },
+  "keywords": ["finance","investing","stock","fundamental-analysis","checklist","companion-variables","damodaran","justified-multiple","roic","wacc","moat","red-flag","due-diligence","earth-evans"]
+}
