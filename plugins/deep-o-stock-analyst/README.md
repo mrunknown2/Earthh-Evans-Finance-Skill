@@ -18,7 +18,7 @@
 ## ติดตั้ง
 
 ```
-/plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill
+/plugin marketplace add mrunknown2/earthh-evans-finance-skill
 /plugin install deep-o-stock-analyst
 ```
 

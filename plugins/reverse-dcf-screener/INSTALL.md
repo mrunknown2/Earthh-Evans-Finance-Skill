@@ -33,7 +33,7 @@ pip install --break-system-packages openpyxl
 
 | IDE | วิธีติดตั้ง |
 |---|---|
-| **Claude Code** | `/plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill` → `/plugin install reverse-dcf-screener` · commands resolve path ของ template/scripts ผ่าน `${CLAUDE_PLUGIN_ROOT}` ให้อัตโนมัติ |
+| **Claude Code** | `/plugin marketplace add mrunknown2/earthh-evans-finance-skill` → `/plugin install reverse-dcf-screener` · commands resolve path ของ template/scripts ผ่าน `${CLAUDE_PLUGIN_ROOT}` ให้อัตโนมัติ |
 | **Antigravity** | ก๊อปโฟลเดอร์ `skills/reverse-dcf-screener/` ทั้งดุ้นเข้าไปใน `.agents/skills/` ของ project · agent จะอ่าน `SKILL.md` + `references/` และรัน `scripts/fill_engine.py` (resolve path ของ template/scripts แบบ relative กับโฟลเดอร์ skill) |
 | **Codex** | ก๊อปโฟลเดอร์ skill เข้าไปใน skills dir ของ Codex (หรือใช้เป็น plugin) · ⚠️ **Codex sandbox ปิด network เป็น default** → ต้องเปิด network access ก่อน ไม่งั้น WebFetch/WebSearch ดึงงบ (10-K/10-Q/Damodaran) ไม่ได้ |
 
