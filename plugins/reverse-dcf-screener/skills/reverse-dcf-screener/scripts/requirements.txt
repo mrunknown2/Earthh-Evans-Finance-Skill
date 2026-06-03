@@ -1,0 +1,4 @@
+# Reverse DCF Screener — engine dependency
+# Needed ONLY for writing .xlsx (fill_engine.py write_xlsx / screener append).
+# compute()/verdict/screener-view run on the stdlib alone — no install required to read results.
+openpyxl>=3.1
