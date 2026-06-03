@@ -6,3 +6,11 @@ source/
 
 # Backup files (จาก /misc:inject-mugi ฯลฯ)
 *.bak.*
+
+# reverse-dcf-screener runtime output
+analyses/
+
+# Python output (test/runtime)
+__pycache__/
+*.py[cod]
+.pytest_cache/

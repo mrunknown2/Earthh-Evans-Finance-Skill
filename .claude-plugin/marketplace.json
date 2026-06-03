@@ -6,8 +6,8 @@
     "email": "noreply@example.com"
   },
   "metadata": {
-    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 3 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
-    "version": "0.2.0",
+    "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 4 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium), reverse-dcf-screener (Terminal-Anchored reverse DCF ถอดความคาดหวังที่ราคาฝัง → หุ้นถูก/แพง + โซนราคา). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
+    "version": "0.3.0",
     "pluginRoot": "./"
   },
   "plugins": [
@@ -31,6 +31,13 @@
       "description": "BTC Short Premium — Senior Option Trader desk สำหรับ Bybit BTC Daily Options (ขาย Call/Put รายวันเก็บ premium). วิเคราะห์ 6 ขั้นจากรูป 5 ภาพ (CoinGlass/OptionChain/D-4H-1H) → TRADE/SKIP/WAIT พร้อม strike/size/entry/SL(Index Price). 8-Check + No-Trade Rules + Combination Read + Critical Rules. agent + 9 commands + skill. เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
       "version": "0.1.0",
       "keywords": ["finance", "btc", "bitcoin", "option", "short-premium", "theta", "bybit", "daily-option", "iv-hv", "combination-read", "pin-risk", "earth-evans"]
+    },
+    {
+      "name": "reverse-dcf-screener",
+      "source": "./plugins/reverse-dcf-screener",
+      "description": "Reverse DCF Screener — Terminal-Anchored: ถอดความคาดหวังที่ราคาฝัง → Market-Implied CAGR เทียบ Plausible CAGR → หุ้นถูก/แพง + โซนราคาน่าสะสม. กรอก Excel template + verify 2 รอบ. portable (Claude Code/Codex/Antigravity). เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล.",
+      "version": "0.1.0",
+      "keywords": ["finance", "investing", "stock", "valuation", "reverse-dcf", "terminal-anchored", "implied-cagr", "expectation-investing", "damodaran", "excel", "screener", "earth-evans"]
     }
   ]
 }
