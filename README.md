@@ -15,6 +15,19 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 
 > สี่ตัว **เสริมกัน ไม่ทับหน้าที่**: `deep-o-stock-analyst` เจาะหุ้นเดี่ยว (US equity) · `portfolio-risk-architect` มองความเสี่ยงทั้งพอร์ต multi-asset · `btc-short-premium` เดสก์เทรด crypto options รายวัน (vision-based) · `reverse-dcf-screener` วัด "ความคาดหวัง" ที่ราคาฝัง (expectation investing) ผ่าน Excel engine
 
+## Deterministic engines — เลขเงินไม่เดา
+
+เรื่องเงินๆ ทองๆ ต้องผิดน้อยที่สุด ทุก plugin จึงมี **engine เป็น Python stdlib-only** (ไม่พึ่ง numpy/scipy → portable ทุก IDE / Codex / Antigravity) ที่รันเลขแบบ **deterministic** — โมเดลแค่ดึงข้อมูล + ตีความ ส่วนคณิตศาสตร์การเงินวิ่งผ่าน script ที่ตายตัว (Monte Carlo / frontier ใช้ seeded RNG → ทำซ้ำผลได้) คุมความถูกต้องด้วย known-answer test
+
+| Plugin | Engine | คำนวณ | Tests |
+|---|---|---|---|
+| portfolio-risk-architect | `portfolio_engine.py` | risk contribution, diversification ratio, ENB, Monte Carlo (GBM, seeded), efficient frontier, stress | 18 |
+| deep-o-stock-analyst | `valuation_engine.py` | WACC (CAPM), DCF, terminal-anchored reverse DCF, DEEP score (0–100) | 12 |
+| btc-short-premium | `btc_calc.py` | daily SD, SD distance, IV/HV gate, position sizing, pin distance | 8 |
+| reverse-dcf-screener | `fill_engine.py` | Terminal-Anchored implied CAGR, plausible-CAGR caps, price zones, Excel fill/append | 10 |
+
+> รวม **48 known-answer tests** (เลขคำนวณด้วยมือ) ผ่านทั้งหมด · seeded → reproducible · Excel เก็บสูตรไว้ให้ recalc เองตอนเปิด
+
 ## ติดตั้ง
 
 ```
@@ -49,24 +62,55 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 
 รายละเอียดแต่ละคำสั่งดูใน README ของ plugin: [portfolio-risk-architect](plugins/portfolio-risk-architect/README.md) · [deep-o-stock-analyst](plugins/deep-o-stock-analyst/README.md) · [btc-short-premium](plugins/btc-short-premium/README.md) · [reverse-dcf-screener](plugins/reverse-dcf-screener/README.md)
 
+📖 **คู่มือใช้งานเต็ม (playbook) รายปลั๊กอิน** — ติดตั้ง → เตรียมข้อมูล → คำสั่ง → อ่านผลลัพธ์ → ข้อควรระวัง: [`docs/`](docs/README.md)
+
 ## เพิ่ม skill ใหม่ (จาก source ถัดไป)
 
 1. วาง source material (เช่น PDF) ลงโฟลเดอร์ `source/` (gitignored — เก็บ local เท่านั้น)
-2. สกัด + เรียบเรียงเป็น plugin ใหม่ใต้ `plugins/<ชื่อ>/` (skills / agents / commands)
+2. สกัด + เรียบเรียงเป็น plugin ใหม่ใต้ `plugins/<ชื่อ>/` (skills / agents / commands) — เลขเงินทำเป็น **deterministic engine** (`scripts/<engine>.py` + test) ไม่ให้โมเดลปั้นเอง
 3. ลงทะเบียน plugin ใหม่ใน `.claude-plugin/marketplace.json`
+4. เขียน **playbook** การใช้งานใน `docs/<ชื่อ>.md` · เก็บ design spec/plan ไว้ใน `design/` (internal, gitignored)
 
 ## โครงสร้าง
 
 ```
 .claude-plugin/marketplace.json      # ลงทะเบียน plugin ทั้งหมด
 plugins/
-  portfolio-risk-architect/          # skill + agent + 9 commands
-  deep-o-stock-analyst/              # skill + agent + 10 commands
-  btc-short-premium/                 # skill + agent + 9 commands
-  reverse-dcf-screener/              # skill + agent + 9 commands (Excel engine)
-source/                              # source material ดิบ (gitignored)
-docs/superpowers/                    # spec + implementation plan ของแต่ละ plugin
+  portfolio-risk-architect/          # skill + agent + 9 commands + engine
+  deep-o-stock-analyst/              # skill + agent + 10 commands + engine
+  btc-short-premium/                 # skill + agent + 9 commands + engine
+  reverse-dcf-screener/              # skill + agent + 9 commands + Excel engine
+docs/                                # playbook สาธารณะ รายปลั๊กอิน (track เข้า repo)
+design/                              # เอกสารออกแบบภายใน specs+plans (gitignored — ไม่ push)
+source/                              # source material ดิบ Earth Evans (gitignored)
 ```
+
+## Changelog
+
+รูปแบบอิง [Keep a Changelog](https://keepachangelog.com) · เวอร์ชันอ้างอิง **marketplace** (แต่ละ plugin มีเวอร์ชันของตัวเองใน `plugin.json`)
+
+### [0.4.0] — 2026-06-03
+**Deterministic engines + ความถูกต้องเชิงตัวเลข (review remediation)**
+- เพิ่ม **deterministic engine (Python stdlib-only, seeded)** ครบทุก plugin — เลขเงินวิ่งผ่าน script ไม่ให้โมเดลปั้นเอง · รวม **48 known-answer tests**
+  - ใหม่: `portfolio_engine.py` · `valuation_engine.py` · `btc_calc.py` (reverse-dcf มี `fill_engine.py` อยู่ก่อนแล้ว)
+- แก้บั๊กความถูกต้อง HIGH-severity 6 จุด (H1–H6): DEEP score normalize เป็น 0–100, reverse DCF เปลี่ยนเป็น terminal-anchored, screener chat ตรงกับที่ Excel recalc, BTC size cap / max-loss / image-completeness gate ฯลฯ
+- ลบ orphan doc ที่สูตรเก่าไม่ตรง · ทุก plugin → `v0.2.0` · owner → `baewkun`
+
+### [0.3.0] — 2026-06-03
+**reverse-dcf-screener — ปลั๊กอินที่ 4**
+- เพิ่ม **reverse-dcf-screener** (Terminal-Anchored Reverse DCF): Market-Implied CAGR เทียบ Plausible CAGR → ถูก/Fair/แพง + โซนราคา 4 ระดับ · กรอกงบลง Excel template + verify 2 รอบ · portable
+- **screener append mode** — เพิ่มหุ้นลง master Screener sheet (เขียนเฉพาะ input cols ไม่แตะ formula cols) เทียบหลายตัวบนสมมติฐานเดียว
+- dependency robustness — เช็ค openpyxl แบบ graceful + คำแนะนำ PEP 668 + `requirements.txt`
+
+### [0.2.0] — 2026-06-02
+**btc-short-premium — ปลั๊กอินที่ 3**
+- เพิ่ม **btc-short-premium**: เดสก์ขาย Call/Put รายวันบน Bybit เก็บ premium · วิเคราะห์ 6 ขั้นจากรูป 5 ภาพ (CoinGlass / Option Chain / TradingView D-4H-1H) → TRADE/SKIP/WAIT + strike/size/entry/SL · 8-Check + No-Trade Rules + Pin risk
+
+### [0.1.0] — 2026-06-02
+**Marketplace bootstrap + 2 ปลั๊กอินแรก**
+- เพิ่ม **portfolio-risk-architect**: วินิจฉัยความเสี่ยงพอร์ต multi-asset แบบ look-through (capital weight ≠ risk weight) — risk contribution, correlation, stress test, Monte Carlo, frontier, rebalance
+- เพิ่ม **deep-o-stock-analyst**: วิเคราะห์หุ้นรายตัว (US) ด้วยกรอบ DEEP+O สไตล์ Damodaran + McKinsey — DCF, reverse DCF, option-adjusted valuation, DEEP score → verdict
+- bootstrap `.claude-plugin/marketplace.json` + guardrails (3-Level Permission Model) + persona มูกิ C
 
 ## Disclaimer
 
