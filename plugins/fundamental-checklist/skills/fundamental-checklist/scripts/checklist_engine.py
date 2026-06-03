@@ -153,6 +153,7 @@ def screen(criteria, is_financial=False, fcf_exempt=False):
 # ---------- Scorecard aggregate (15 หมวด → overall read, ไม่ปั้น weight/0-100) ----------
 
 CRITICAL_CATEGORIES = {"Moat", "Financial Strength", "Earnings Quality"}
+VALID_VERDICTS = {"pass", "caution", "red"}
 
 
 def scorecard(categories, red_flags=None, screen_result=None):
@@ -160,9 +161,20 @@ def scorecard(categories, red_flags=None, screen_result=None):
 
     Derive ตรงจากเอกสาร: นับ pass/caution/red ต่อหมวด + red flag รวม + screen gate.
     ไม่มี 0-100, ไม่ปั้น weight. critical_red = red ในหมวด Moat/Financial/EarningsQuality.
+
+    validate verdict ทุกหมวด ∈ {pass,caution,red} ก่อนนับ — กัน verdict นอกชุด
+    (เช่น "avoid" ที่เป็น overall_read) ถูก silent-drop ทำให้ pass+caution+red < จำนวนหมวด
+    และอาจพลาด critical_red. strict throw แทนเมินเงียบ.
     """
     red_flags = red_flags or []
     screen_result = screen_result or {"passed": 0, "total": 10}
+    for c in categories:
+        if "name" not in c or "verdict" not in c:
+            raise ValueError(f"category ต้องมี 'name' + 'verdict': {c!r}")
+        if c["verdict"] not in VALID_VERDICTS:
+            raise ValueError(
+                f"category {c['name']!r} verdict ผิด: {c['verdict']!r} "
+                "(ต้องเป็น pass/caution/red — 'avoid' เป็น overall_read ไม่ใช่ verdict ของหมวด)")
     pass_c = sum(1 for c in categories if c["verdict"] == "pass")
     caution_c = sum(1 for c in categories if c["verdict"] == "caution")
     red_c = sum(1 for c in categories if c["verdict"] == "red")
@@ -187,6 +199,59 @@ def scorecard(categories, red_flags=None, screen_result=None):
                     "ปิดท้ายด้วย 3 คำถามสุดท้ายก่อนกดซื้อ (qualitative)."}
 
 
+# ---------- Derive (raw financials → derived metrics, deterministic) ----------
+
+def derive(d):
+    """คำนวณ derived metrics จาก raw financials — แทนการให้ agent คำนวณในหัว.
+
+    graceful: ทุก field optional · metric ที่ input ครบเท่านั้นที่คำนวณ ·
+    field ที่ขาด → ผลเป็น null + ชื่อ field เข้า `missing` · หารศูนย์ → null ·
+    ไม่ throw. ผลที่ได้ป้อนต่อเข้า companion/screen ได้ตรง (deterministic ข้าม platform).
+    """
+    missing = []
+
+    def g(k):
+        v = d.get(k)
+        if v is None and k not in missing:
+            missing.append(k)
+        return v
+
+    def div(a, b):
+        return a / b if (a is not None and b not in (None, 0)) else None
+
+    mc, debt, cash = g("market_cap"), g("total_debt"), g("cash_and_investments")
+    rev, ebit, ebitda, tax = g("revenue"), g("ebit"), g("ebitda"), g("tax_rate")
+    ni, ocf, fcf, eq = g("net_income"), g("ocf"), g("fcf"), g("equity")
+    es, ee, ey = g("eps_start"), g("eps_end"), g("eps_years")
+    divd, bb = g("dividends"), g("buybacks")
+
+    net_debt = (debt - cash) if None not in (debt, cash) else None
+    ev = (mc + debt - cash) if None not in (mc, debt, cash) else None
+    atom = (ebit * (1.0 - tax) / rev) if (None not in (ebit, tax, rev) and rev) else None
+    eps_cagr = (((ee / es) ** (1.0 / ey)) - 1.0
+                if (None not in (es, ee, ey) and es > 0 and ey > 0) else None)
+    total_payout = (divd + bb) if None not in (divd, bb) else None
+
+    return {
+        "net_debt": net_debt,
+        "net_debt_ebitda": div(net_debt, ebitda),
+        "ev": ev,
+        "ev_sales": div(ev, rev),
+        "ev_ebitda": div(ev, ebitda),
+        "pb": div(mc, eq),
+        "pe": div(mc, ni),
+        "fcf_conversion": div(fcf, ni),
+        "cash_conversion": div(ocf, ni),
+        "after_tax_op_margin": atom,
+        "eps_cagr": eps_cagr,
+        "total_payout_ratio": div(total_payout, ni),
+        "fcf_yield": div(fcf, ev),
+        "missing": missing,
+        "note": "derived metrics — ป้อนต่อเข้า companion/screen แทนคำนวณในหัว. "
+                "null = input ไม่ครบ (ดู missing) หรือหารศูนย์. eps_cagr/total_payout เป็นสัดส่วน (×100 = %).",
+    }
+
+
 # ---------- dispatch ----------
 
 def analyze(d):
@@ -200,7 +265,9 @@ def analyze(d):
     if mode == "scorecard":
         return scorecard(d["categories"], d.get("red_flags"),
                          d.get("screen_result"))
-    raise ValueError(f"unknown mode: {mode!r} (companion|screen|scorecard)")
+    if mode == "derive":
+        return derive(d)
+    raise ValueError(f"unknown mode: {mode!r} (companion|screen|scorecard|derive)")
 
 
 def main():

@@ -22,6 +22,10 @@ Justified P/E = (Payout Ratio × (1 + g)) / (Cost of Equity − g)
 - `g` = อัตราการเติบโต EPS ที่ยั่งยืนระยะยาว
 - สูตรนี้บอกว่า P/E "ควร" ซื้อขายที่เท่าไร ตาม Fundamental จริง
 
+> **2 กับดักของ Justified P/E (1-stage) — เจอจริงในเคส mega-cap reinvestor (เช่น Alphabet):**
+> 1. **Payout ต่ำ ≠ แพงเสมอ** — บริษัทที่จ่ายปันผลน้อยแต่ reinvest/ซื้อหุ้นคืนหนัก (Alphabet payout ปันผล ~8%) จะได้ Justified P/E ต่ำผิดปกติ เพราะ `payout` ใช้ปันผลล้วน → ให้ใส่ **Total Shareholder Payout = (Dividend + Buyback) / Net Income** เป็น `payout` แทน (Alphabet ~42% → Justified P/E ขยับจาก ~2x เป็น ~11x)
+> 2. **`g` คือ terminal growth** — สูตร 1-stage ใช้ g ระยะยาว (~4–5%) ถ้าธุรกิจโต near-term 15–25% สูตรจะ **understate Justified P/E อย่างเป็นระบบ** → high-growth ต้องอ่านคู่ PEG + Reverse DCF อย่าตัดสินจาก Justified P/E ตัวเดียว
+
 ### PEG Ratio — ทางลัดที่ใช้งานได้จริง
 
 ```
