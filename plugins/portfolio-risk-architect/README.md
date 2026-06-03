@@ -10,7 +10,10 @@
 |---|---|---|
 | 🧩 Skill | `portfolio-risk-architect` | หลักคิด 5 + Diagnostic Workflow 8 ขั้น (auto-trigger เมื่อคุยเรื่องความเสี่ยงพอร์ต) |
 | 🤖 Agent | `portfolio-risk-architect` | subagent บทบาท Senior Multi-Asset Strategist (เรียกผ่าน Agent tool) |
+| ⚙️ Engine | `scripts/portfolio_engine.py` | คำนวณ risk contribution / DR / ENB / VaR-CVaR / Monte Carlo / frontier แบบ **deterministic** (stdlib ล้วน + seeded) — โมเดล**ไม่เดาเลขเรื่องเงิน** |
 | ⚡ Commands | 9 คำสั่ง | `/full` `/xray` `/overlap` `/risk` `/corr` `/stress` `/montecarlo` `/frontier` `/rebalance` |
+
+> 🔢 **ตัวเลขความเสี่ยงทุกตัวมาจาก engine ที่รันจริง ไม่ใช่ LLM ประเมิน** — input เดิม (รวม `seed`) ให้ผลเดิมเป๊ะ (reproducible). schema + สูตร: [`skills/portfolio-risk-architect/references/engine.md`](skills/portfolio-risk-architect/references/engine.md)
 
 ## ติดตั้ง
 
@@ -18,6 +21,8 @@
 /plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill
 /plugin install portfolio-risk-architect
 ```
+
+ต้องมี **Python 3** เพื่อรัน engine — **ไม่ต้อง `pip install`** (stdlib ล้วน · เลี่ยง numpy เพื่อ portability ข้าม IDE/provider)
 
 ## ใช้งาน
 

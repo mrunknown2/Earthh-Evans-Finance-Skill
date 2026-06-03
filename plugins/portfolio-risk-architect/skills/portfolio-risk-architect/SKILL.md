@@ -72,6 +72,7 @@ description: >
 3. **ระบุ as-of date เสมอ** — ตลาดเปลี่ยนเร็ว น้ำหนัก ETF และ correlation ขยับตลอด
 4. **Simulation = ช่วงความเป็นไปได้** ไม่ใช่พยากรณ์ — ระบุสมมติฐาน (μ, σ, ρ, horizon) ทุกครั้ง
 5. ตรงเรื่องความเสี่ยง ไม่ปลอบใจ ไม่ขายฝัน · **เป็นกรอบวิเคราะห์เชิงการศึกษา ไม่ดำเนินการลงทุนแทนผู้ใช้รายบุคคล**
+6. **ห้ามเดาเลขความเสี่ยง (BLOCKING)** — risk contribution / DR / ENB / VaR-CVaR / max DD / frontier **ต้องผ่าน `portfolio_engine.py`** (deterministic, seeded) ไม่ใช่ประเมินเอง · โมเดลมีหน้าที่ดึงข้อมูล σ/ρ/μ จริง → ประกอบ JSON → รัน engine → **เล่าผลที่ engine คืน** เท่านั้น (ดู `references/engine.md`)
 
 ---
 
@@ -80,6 +81,20 @@ description: >
 ถ้ายังไม่รู้ ถามสั้นๆ ก่อนวินิจฉัย: (1) holdings + น้ำหนัก (2) สกุลเงินฐาน / ประเทศ (tax & FX) (3) horizon + ความทนต่อ drawdown (4) ข้อจำกัด (เทรดได้อะไร, ภาษี, สภาพคล่อง) — ถ้าข้อมูลครบแล้ว ห้ามถามซ้ำ ลุยวินิจฉัยเลย
 
 ---
+
+## Deterministic Engine (เรื่องเงิน ห้ามให้โมเดลปั้นเลข)
+
+heavy math ทั้งหมดผ่าน **`scripts/portfolio_engine.py`** — Python 3 **stdlib ล้วน** (ไม่ต้อง `pip install`) + **seeded RNG** → input เดิมให้ผลเดิมเป๊ะ (reproducible). engine คำนวณ; โมเดลเล่าผล.
+
+```bash
+echo '{"mode":"all","seed":42,"assets":[{"name":"VOO","weight":0.3,"vol":0.16,"mu":0.08}, ...],
+  "correlation":[[1,...],...],"scenarios":[{"name":"GFC 2008","shocks":{"VOO":-0.51,...}}]}' \
+  | python3 "${CLAUDE_PLUGIN_ROOT}/skills/portfolio-risk-architect/scripts/portfolio_engine.py"
+```
+
+คืน JSON: `risk` (σ_p, %RC ต่อสินทรัพย์, DR, ENB, effective holdings, HHI) · `stress` (return ต่อ scenario) · `montecarlo` (p5/p50/p95, VaR/CVaR 95-99, prob loss, E[max DD]) · `frontier` (min-vol / max-Sharpe / จุดปัจจุบัน). **schema + สูตรเต็มดู `references/engine.md`**
+
+> MC เป็น GBM (ไม่จับ fat tail) → เสริม `/stress` historical เสมอ · ทุกผล = ช่วงความเป็นไปได้ใต้สมมติฐาน ไม่ใช่พยากรณ์
 
 ## Commands
 

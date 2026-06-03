@@ -2,7 +2,6 @@
 description: "แตก look-through holdings เป็นหุ้นรายตัวจริง + treemap น้ำหนัก sector/single-name"
 allowed-tools:
   - Read
-  - Write
 model: opus
 ---
 
