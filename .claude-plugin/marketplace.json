@@ -2,8 +2,8 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "earthh-evans-finance",
   "owner": {
-    "name": "mrunknown2",
-    "email": "noreply@example.com"
+    "name": "baewkun",
+    "email": "annochan@gmail.com"
   },
   "metadata": {
     "description": "Earthh Evans Finance — Claude Code plugin marketplace แปลงความรู้การลงทุนของ Earth Evans (Invest Hub) เป็น skill/agent/command ใช้งานจริง. 4 plugins: portfolio-risk-architect (ความเสี่ยงพอร์ต multi-asset), deep-o-stock-analyst (วิเคราะห์หุ้น DEEP+O), btc-short-premium (Bybit BTC daily short premium), reverse-dcf-screener (Terminal-Anchored reverse DCF ถอดความคาดหวังที่ราคาฝัง → หุ้นถูก/แพง + โซนราคา). เนื้อหาเชิงการศึกษา ไม่ใช่คำแนะนำลงทุนรายบุคคล.",
