@@ -4,7 +4,7 @@ allowed-tools:
   - WebSearch
   - WebFetch
   - Read
-  - Write
+  - Bash
 model: opus
 ---
 
@@ -37,6 +37,8 @@ model: opus
 /full NVDA
 ```
 
+> ขั้น 2/3/4/6 (WACC, DCF, reverse DCF, DEEP score) **ตัวเลขต้องมาจาก `valuation_engine.py`** (deterministic) — ห้ามคำนวณในหัว · schema: `skills/deep-o-stock-analyst/references/engine.md`
+
 ## Discipline
 
-ทุกตัวเลข/ข้อเท็จจริงสำคัญ **ใส่ลิงก์อ้างอิง** · ระบุ **as-of date** (YYYY-MM-DD) · ห้ามกุข้อมูล (ไม่พบให้เขียน "ไม่พบข้อมูล") · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล
+**ตัวเลข valuation/score มาจาก engine** · ทุกตัวเลข/ข้อเท็จจริงสำคัญ **ใส่ลิงก์อ้างอิง** · ระบุ **as-of date** (YYYY-MM-DD) · ห้ามกุข้อมูล (ไม่พบให้เขียน "ไม่พบข้อมูล") · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล

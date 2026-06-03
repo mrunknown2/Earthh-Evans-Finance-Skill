@@ -4,6 +4,7 @@ allowed-tools:
   - WebSearch
   - WebFetch
   - Read
+  - Bash
 model: opus
 ---
 
@@ -17,19 +18,21 @@ model: opus
 
 ## สิ่งที่ทำ
 
-**B) Operating Drivers (Stage 1–3):**
-- Revenue growth: ปีถัดไป + เฉลี่ยปี 2–5, 6–10 (อธิบายตัวขับ)
-- Margin path: operating margin → เป้าเสถียร
-- Tax: effective → marginal
-- Reinvestment (Sales-to-Capital): `Reinvestment_t = ΔRevenue_t / (S/C_t)` (ระบุ S/C ปี 1–5, 6–10)
+**B) Operating Drivers (Stage 1–3):** กำหนด path ของ revenue growth / operating margin / tax / Sales-to-Capital (`Reinvestmentₜ = ΔRevenueₜ / (S/C)ₜ`) ต่อปี
 
-**C) Clean-ups:** excess cash · debt (book→MV) · cross-holdings · minority interests · **ESOP** Black-Scholes หักจาก equity · **NOLs** · **Failure risk** `p_failure × recovery` (บังคับถ้า early/fragile)
+**C) Clean-ups:** excess cash · debt (book→MV) · cross-holdings · minority interests · **ESOP** Black-Scholes หักจาก equity · **NOLs** · **Failure risk** — รวมเป็น `cleanups` (net adjustment) ส่งเข้า engine · failure-risk adjust: `EV_adj = (1−p)·EV + p·(recovery·EV)` (อย่าลืม `(1−p)` ตัวหน้า)
 
-**D) Stable Guardrails:** `g∞ ≤ nominal GDP` · `ROIC∞ → industry/WACC` · `Terminal reinvestment = g∞/ROIC∞` (โชว์ค่า)
+**D) รัน engine** หา intrinsic value (ห้าม discount เอง) — mode `dcf` รับ array ต่อปี:
+```bash
+echo '{"mode":"dcf","revenue0":<R0>,"growths":[..N..],"margins":[..N..],"sales_to_capital":[..N..],
+  "tax":<t>,"wacc":<W>,"g_terminal":<g∞>,"roic_terminal":<ROIC∞>,"terminal_margin":<m∞>,
+  "net_debt":<ND>,"shares":<sh>,"cleanups":<adj>}' \
+  | python3 "${CLAUDE_PLUGIN_ROOT}/skills/deep-o-stock-analyst/scripts/valuation_engine.py"
+```
+engine คืน `firm_value`, `equity_value`, `value_per_share`, `terminal_value`, `terminal_reinvestment_rate` (= g∞/ROIC∞), `fcff_explicit[]`
+> **Guardrails ก่อนส่ง:** `g∞ ≤` nominal GDP / risk-free · `ROIC∞ →` industry/WACC · ถ้า pre-profit/cyclical/financial → DCF ใช้ไม่ได้ตรงๆ (ดู SKILL.md discipline #7)
 
-**E) Triangulation:** CFROI vs WACC · FCFE yield vs CoE · Reverse DCF cross-check
-
-→ **Intrinsic value / share** + ส่วนต่างจากราคาตลาด
+**E) Triangulation:** CFROI vs WACC · FCFE yield vs CoE · **Reverse DCF** (`/reversedcf`) cross-check · เทียบ `value_per_share` กับราคาตลาด → ส่วนต่าง
 
 ## ตัวอย่างสั่ง
 
@@ -39,4 +42,4 @@ model: opus
 
 ## Discipline
 
-ทุกตัวเลข/ข้อเท็จจริงสำคัญ **ใส่ลิงก์อ้างอิง** · ระบุ **as-of date** (YYYY-MM-DD) · ระบุสมมติฐาน (WACC, g∞, margin, S/C) ทุกตัว · ห้ามกุข้อมูล · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล
+**ตัวเลข intrinsic value มาจาก engine** · ทุกตัวเลข/ข้อเท็จจริงสำคัญ **ใส่ลิงก์อ้างอิง** · ระบุ **as-of date** (YYYY-MM-DD) + สมมติฐาน (WACC, g∞, margin, S/C, ROIC∞) ทุกตัว + รายงานเป็น**ช่วง** (sensitivity WACC×g∞) ไม่ใช่จุดเดียว · ห้ามกุข้อมูล · เชิงการศึกษา ไม่ใช่คำแนะนำรายบุคคล
