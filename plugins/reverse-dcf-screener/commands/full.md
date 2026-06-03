@@ -26,7 +26,7 @@ model: opus
    ```
 2. **verify** — ไล่เช็คทุกตัวเลขจากงบล่าสุด**อีกรอบ** (discipline บังคับ 2 รอบ) → แก้ค่าที่เพี้ยน → rerun engine ทับไฟล์เดิม
 3. **zones** — แปลผลเป็นโซนราคา 4 ระดับ (🟢 Strong Buy / 🟢 Fair / ⚠️ Caution / 🔴 Red Flag) + ปักหมุดราคาปัจจุบัน
-4. **append screener** — เพิ่มหุ้นลง master screener ตาม `/reverse-dcf-screener:screener` เพื่อเทียบกับตัวอื่น
+4. **append screener** — รัน engine โหมด screener (pipe payload เดิม + `"screener_file":"analyses/screener.xlsx"`) → engine append แถว + คืน `screener_row/screener_globals` ตาม `/reverse-dcf-screener:screener` เพื่อเทียบกับตัวอื่น (ไม่ต้องเขียน python เอง)
 5. **สรุปจบ** — verdict สุดท้าย · Implied/Plausible/Gap · โซนราคา · path ไฟล์ที่สร้าง
 
 ## ตัวอย่างสั่ง

@@ -8,7 +8,26 @@
 pip install openpyxl
 ```
 
-ต้องมี **Python 3** + `openpyxl` ทุกที่ — `scripts/fill_engine.py` ใช้ openpyxl กรอก input cells ลง Excel template (engine พังถ้าไม่มี) · และต้องมี **Excel / Google Sheets** เพื่อเปิดไฟล์ผลลัพธ์ให้สูตรในช่อง recalc
+หรือใช้ไฟล์ pin: `pip install -r skills/reverse-dcf-screener/scripts/requirements.txt`
+
+ต้องมี **Python 3** + `openpyxl` — `scripts/fill_engine.py` ใช้ openpyxl **เฉพาะตอนเขียนไฟล์** (`/analyze`, `/full`, `/screener`) · ต้องมี **Excel / Google Sheets** เพื่อเปิดไฟล์ผลลัพธ์ให้สูตรในช่อง recalc
+
+> 💡 **ส่วนคำนวณ verdict / screener-view ไม่ต้องใช้ openpyxl** — `compute()` เป็น stdlib ล้วน ดังนั้นถ้าแค่อยากได้คำตอบถูก/แพงใน chat โดยไม่เขียนไฟล์ ก็รันได้แม้ไม่มี package · ถ้าไม่ได้ลง openpyxl แล้วสั่งเขียนไฟล์ engine จะ **แจ้ง error ชัดเจน + คำสั่งติดตั้ง** แทน traceback ดิบ
+
+### ⚠️ ถ้าเจอ `error: externally-managed-environment` (PEP 668)
+
+macOS (homebrew Python) และ Linux distro ใหม่ๆ บล็อก `pip install` ลง system Python ตรงๆ — เลือกทางใดทางหนึ่ง:
+
+```bash
+# (แนะนำ) virtualenv แยกของ project
+python3 -m venv .venv && . .venv/bin/activate && pip install openpyxl
+
+# หรือ pipx (ติดตั้งแยก sandbox)
+pipx install openpyxl
+
+# หรือ override (รู้ตัวว่าทำอะไรอยู่)
+pip install --break-system-packages openpyxl
+```
 
 ## 3 IDE
 
