@@ -9,6 +9,8 @@
 /plugin install reverse-dcf-screener
 ```
 
+> 🌐 ติดตั้งบน **Claude Desktop / Codex / Antigravity** (portable skill) ดู [`INSTALL.md`](../plugins/reverse-dcf-screener/INSTALL.md) — 4-surface matrix + verify checklist
+
 **Dependency จำเป็น** (ไม่งั้น engine เขียนไฟล์ไม่ได้):
 
 ```

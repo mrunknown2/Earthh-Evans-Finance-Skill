@@ -29,13 +29,50 @@ pipx install openpyxl
 pip install --break-system-packages openpyxl
 ```
 
-## 3 IDE
+## 4 surface (ติดตั้งต่อ platform)
 
-| IDE | วิธีติดตั้ง |
-|---|---|
-| **Claude Code** | `/plugin marketplace add mrunknown2/earthh-evans-finance-skill` → `/plugin install reverse-dcf-screener` · commands resolve path ของ template/scripts ผ่าน `${CLAUDE_PLUGIN_ROOT}` ให้อัตโนมัติ |
-| **Antigravity** | ก๊อปโฟลเดอร์ `skills/reverse-dcf-screener/` ทั้งดุ้นเข้าไปใน `.agents/skills/` ของ project · agent จะอ่าน `SKILL.md` + `references/` และรัน `scripts/fill_engine.py` (resolve path ของ template/scripts แบบ relative กับโฟลเดอร์ skill) |
-| **Codex** | ก๊อปโฟลเดอร์ skill เข้าไปใน skills dir ของ Codex (หรือใช้เป็น plugin) · ⚠️ **Codex sandbox ปิด network เป็น default** → ต้องเปิด network access ก่อน ไม่งั้น WebFetch/WebSearch ดึงงบ (10-K/10-Q/Damodaran) ไม่ได้ |
+แกนคือโฟลเดอร์ skill เดียว — `skills/reverse-dcf-screener/` (SKILL.md + references + assets + scripts) · **ไม่มี build/zip สำเร็จรูปให้** — surface ที่ต้อง zip ให้ทำเอง (คำสั่งด้านล่าง)
+
+| Surface | ติดตั้ง | network | หมายเหตุ |
+|---|---|---|---|
+| **Claude Code** / Claude Desktop (Code tab) | `/plugin marketplace add mrunknown2/earthh-evans-finance-skill` → `/plugin install reverse-dcf-screener` | เต็ม | ใช้ command/agent ครบ 1:1 · resolve path ผ่าน `${CLAUDE_PLUGIN_ROOT}` |
+| **Claude Desktop** (Chat / Cowork) | zip โฟลเดอร์ skill เอง → อัปที่ **Customize → Skills** | varies | ใช้ SKILL.md self-sufficient ตรงๆ · โครงสร้างใน zip **verify ตอนอัป** |
+| **Codex CLI** | copy โฟลเดอร์ skill → `.agents/skills/reverse-dcf-screener/` | **OFF default → เปิดเอง** | path อาจเป็น `.codex/skills` ในบางเวอร์ชัน — **verify** |
+| **Antigravity** | copy → `<workspace>/.agent/skills/…` หรือ global `~/.gemini/antigravity/skills/…` | verify | path / sandbox อาจต่างตาม build — **verify** |
+
+**zip ให้ Claude Desktop (Chat):**
+```bash
+cd plugins/reverse-dcf-screener/skills
+zip -r reverse-dcf-screener.zip reverse-dcf-screener   # แล้วอัป reverse-dcf-screener.zip
+```
+
+**เปิด network ของ Codex** (จำเป็นตอนดึงงบ — ไม่จำเป็นตอน compute offline):
+```bash
+codex -a never -s workspace-write -c 'sandbox_workspace_write.network_access=true'
+```
+
+## ส่วนไหนต้อง network ส่วนไหนไม่
+
+- **compute / verdict / โซนราคา** = Python stdlib **offline ได้ทุก platform** ✅
+- **เขียน Excel** = ต้อง `openpyxl` (offline · ดู Dependency ด้านบน)
+- **ดึงงบ** (10-K / 10-Q / Damodaran ผ่าน WebFetch/WebSearch) = ต้อง **network** → Codex เปิด flag, Desktop-Chat แล้วแต่ setting
+
+## Verification checklist (รันจริงต่อ platform)
+
+ทำทีละข้อหลังติดตั้งบนแต่ละ platform:
+
+- [ ] **เห็น skill** — platform list ขึ้น `reverse-dcf-screener`
+- [ ] **engine offline** — รัน:
+  ```bash
+  echo '{"ticker":"IREN","revenue_r0":0.757,"ev":22.6,"sector":"Software","wacc":0.095,"terminal_margin":0.35,"terminal_g":0.04,"terminal_roic":0.15,"tax":0.25,"horizon_n":10,"hist_cagr":0.60,"fade":0.70,"tam":150.0,"max_pen":0.25,"abs_ceiling":0.45,"buffer":0.05,"net_debt":-0.7,"shares_m":357.38,"no_write":true}' | python3 scripts/fill_engine.py
+  ```
+  คาดผล: JSON มี `"verdict"` ภาษาไทย + `"implied_cagr"` ≈ 0.32
+- [ ] **เขียน Excel** — มี openpyxl แล้วสั่งเขียนไฟล์ได้ (ไม่มี → error message ชัด ไม่ใช่ traceback)
+- [ ] **network** — หลังเปิด flag ดึงงบจริงได้
+- [ ] **path gap** — ยืนยัน dir จริง (Codex `.agents` vs `.codex` · Antigravity `.agent` vs `.agents`) → อัปเดตหัวตารางตามผลจริง
+- [ ] **zip** — Desktop-Chat อัปแล้ว skill ทำงาน (SKILL.md ถูกอ่าน)
+
+> เขียนค่าที่ likely ไว้ + ให้ verify — เจอ path/sandbox จริงต่างจากนี้ แก้ตารางด้านบนได้เลย
 
 ## หมายเหตุการรัน `fill_engine.py` นอก Claude Code
 
