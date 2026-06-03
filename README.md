@@ -1,4 +1,4 @@
-# Earthh-Evans-Finance-Skill
+# Earthh Evans · Finance Skill
 
 Claude Code **plugin marketplace** ที่แปลงความรู้การลงทุนของ **Earth Evans** (Invest Hub) ให้เป็น skill / agent / command ใช้งานได้จริง — institutional-quality content สำหรับ retail investor ออกแบบให้ port ไป provider อื่น (Gemini / ChatGPT) ได้ในอนาคต
 
@@ -31,7 +31,7 @@ Claude Code **plugin marketplace** ที่แปลงความรู้ก
 ## ติดตั้ง
 
 ```
-/plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill
+/plugin marketplace add mrunknown2/earthh-evans-finance-skill
 /plugin install portfolio-risk-architect
 /plugin install deep-o-stock-analyst
 /plugin install btc-short-premium

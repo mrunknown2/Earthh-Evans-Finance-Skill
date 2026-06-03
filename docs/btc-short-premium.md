@@ -8,7 +8,7 @@
 /plugin install btc-short-premium
 ```
 
-(ถ้ายังไม่ได้เพิ่ม marketplace: `/plugin marketplace add mrunknown2/Earthh-Evans-Finance-Skill` ก่อน)
+(ถ้ายังไม่ได้เพิ่ม marketplace: `/plugin marketplace add mrunknown2/earthh-evans-finance-skill` ก่อน)
 
 ## Quickstart — เริ่มเร็วสุด
 
