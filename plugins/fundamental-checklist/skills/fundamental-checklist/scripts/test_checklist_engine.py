@@ -175,7 +175,91 @@ def test_scorecard_meta_review():
     assert r["critical_red"] is False, r
 
 
-# ---- CLI smoke (ทั้ง 3 modes) ----
+# ---- scorecard: validation hardening (verdict ต้อง ∈ {pass,caution,red}) ----
+
+def test_scorecard_rejects_invalid_verdict():
+    # เคส Gemini: หมวด Quick Screen ใส่ "avoid" (เป็น overall_read ไม่ใช่ verdict หมวด)
+    # → ต้อง raise ไม่ใช่ silent-drop ทำให้ pass+caution+red < จำนวนหมวด
+    cats = _cats({"Quick Screen": "avoid"})
+    try:
+        E.scorecard(cats, red_flags=[], screen_result={"passed": 5, "total": 10})
+        assert False, "ควร raise ValueError สำหรับ verdict 'avoid'"
+    except ValueError as e:
+        assert "avoid" in str(e) and "Quick Screen" in str(e), e
+
+
+def test_scorecard_rejects_missing_verdict_key():
+    cats = _cats({})
+    del cats[0]["verdict"]  # หมวดแรกไม่มี verdict
+    try:
+        E.scorecard(cats, red_flags=[], screen_result={"passed": 10, "total": 10})
+        assert False, "ควร raise ValueError เมื่อ category ขาด verdict"
+    except ValueError:
+        pass
+
+
+def test_scorecard_count_equals_total_when_valid():
+    # เมื่อ verdict valid ครบ pass+caution+red ต้อง == จำนวนหมวดเสมอ
+    cats = _cats({"Valuation": "caution", "Moat": "red"})
+    r = E.scorecard(cats, red_flags=[], screen_result={"passed": 8, "total": 10})
+    assert r["pass_count"] + r["caution_count"] + r["red_count"] == len(cats), r
+
+
+# ---- derive: คำนวณ derived metrics จาก raw (deterministic — แทนคำนวณในหัว) ----
+
+DERIVE_FULL = {
+    "market_cap": 1000, "total_debt": 200, "cash_and_investments": 300,
+    "revenue": 500, "ebit": 100, "ebitda": 150, "tax_rate": 0.20,
+    "net_income": 80, "ocf": 120, "fcf": 60, "equity": 400,
+    "eps_start": 5, "eps_end": 10, "eps_years": 4,
+    "dividends": 10, "buybacks": 30,
+}
+
+
+def test_derive_full_inputs():
+    r = E.derive(DERIVE_FULL)
+    assert approx(r["net_debt"], -100), r            # 200-300
+    assert approx(r["ev"], 900), r                   # 1000+200-300
+    assert approx(r["net_debt_ebitda"], -0.6667, tol=1e-3), r  # -100/150
+    assert approx(r["ev_sales"], 1.8), r             # 900/500
+    assert approx(r["ev_ebitda"], 6.0), r            # 900/150
+    assert approx(r["pb"], 2.5), r                   # 1000/400
+    assert approx(r["pe"], 12.5), r                  # 1000/80
+    assert approx(r["fcf_conversion"], 0.75), r      # 60/80
+    assert approx(r["cash_conversion"], 1.5), r      # 120/80
+    assert approx(r["after_tax_op_margin"], 0.16), r # 100*0.8/500
+    assert approx(r["eps_cagr"], 0.18921, tol=1e-4), r  # 2^0.25-1
+    assert approx(r["total_payout_ratio"], 0.5), r   # 40/80
+    assert approx(r["fcf_yield"], 0.06667, tol=1e-4), r  # 60/900
+    assert r["missing"] == [], r
+
+
+def test_derive_partial_graceful():
+    # ส่งเฉพาะ balance-sheet → metric ที่ขาด input คืน null + เข้า missing, ไม่ throw
+    r = E.derive({"market_cap": 1000, "total_debt": 200,
+                  "cash_and_investments": 300, "ebitda": 150})
+    assert approx(r["net_debt"], -100), r
+    assert approx(r["ev"], 900), r
+    assert approx(r["net_debt_ebitda"], -0.6667, tol=1e-3), r
+    assert r["ev_sales"] is None, r          # ไม่มี revenue
+    assert r["pb"] is None, r                # ไม่มี equity
+    assert r["eps_cagr"] is None, r          # ไม่มี eps_*
+    assert "revenue" in r["missing"], r
+    assert "equity" in r["missing"], r
+
+
+def test_derive_division_by_zero_safe():
+    # ebitda=0, revenue=0, equity=0 → null ไม่ crash
+    r = E.derive({"market_cap": 1000, "total_debt": 200,
+                  "cash_and_investments": 300, "ebitda": 0,
+                  "revenue": 0, "equity": 0, "net_income": 0})
+    assert r["net_debt_ebitda"] is None, r
+    assert r["ev_sales"] is None, r
+    assert r["pb"] is None, r
+    assert r["pe"] is None, r
+
+
+# ---- CLI smoke (ทั้ง 4 modes) ----
 
 def test_cli_modes():
     for payload, key in [
@@ -183,6 +267,7 @@ def test_cli_modes():
         ({"mode": "screen", "criteria": SCREEN_PASS_ALL}, "gate_verdict"),
         ({"mode": "scorecard", "categories": _cats({}), "red_flags": [],
           "screen_result": {"passed": 10, "total": 10}}, "overall_read"),
+        ({"mode": "derive", **DERIVE_FULL}, "ev"),
     ]:
         p = subprocess.run([sys.executable, SCRIPT], input=json.dumps(payload),
                            capture_output=True, text=True)

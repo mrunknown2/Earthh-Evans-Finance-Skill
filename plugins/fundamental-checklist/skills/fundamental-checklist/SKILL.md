@@ -72,7 +72,7 @@ description: >
 
 ---
 
-## Engine — `checklist_engine.py` (3 Modes)
+## Engine — `checklist_engine.py` (4 Modes)
 
 skill package นี้ **portable** — `SKILL.md` + `references/` + `scripts/checklist_engine.py` ชุดเดียว ใช้ได้ทั้ง Claude Code / Claude Desktop / Codex / Antigravity · ไม่ต้อง `pip install` ใด ๆ — **stdlib Python 3 ล้วน** · ติดตั้งต่อ platform ดู **`INSTALL.md`**
 
@@ -83,6 +83,33 @@ echo '<JSON>' | python3 "${CLAUDE_PLUGIN_ROOT}/skills/fundamental-checklist/scri
 # หรือเรียกด้วย full path (engine ไม่พึ่ง CWD)
 python3 /path/to/skills/fundamental-checklist/scripts/checklist_engine.py <<< '<JSON>'
 ```
+
+### Mode 0: `derive` — Raw Financials → Derived Metrics (deterministic)
+
+**รันก่อน companion/screen เสมอ** — แทนการคำนวณ multiple/ratio **ในหัว** (money math ต้อง reproducible ข้าม platform). รับ raw financials (ทุก field optional) → คืน 13 derived metrics · field ที่ขาด → `null` + เข้า `missing` · หารศูนย์ → `null` · ไม่ throw
+
+```bash
+echo '{"mode":"derive","market_cap":4360000,"total_debt":59291,"cash_and_investments":126843,"revenue":402836,"ebit":129039,"ebitda":150175,"tax_rate":0.176,"net_income":132170,"ocf":164713,"fcf":73266,"equity":415265,"eps_start":5.61,"eps_end":10.82,"eps_years":4,"dividends":10049,"buybacks":45709}' \
+  | python3 "${CLAUDE_PLUGIN_ROOT}/skills/fundamental-checklist/scripts/checklist_engine.py"
+```
+
+Output → ป้อนต่อเข้า mode อื่น (เลิกคำนวณในหัว):
+
+| derived key | feed → | หมายเหตุ |
+|-------------|--------|---------|
+| `net_debt_ebitda` | screen `net_debt_ebitda` | net cash = ติดลบ |
+| `fcf_conversion` (FCF/NI) | screen `fcf_conversion` | **≠** `cash_conversion` (OCF/NI) |
+| `eps_cagr` | companion peg `eps_growth_5y` (×100) | |
+| `ev`, `ev_sales` | companion ev_sales `ev` / `actual_ev_sales` | |
+| `ev_ebitda` | companion ev_ebitda | |
+| `pb` | companion pb `actual_pb` | |
+| `pe` | companion pe `actual_pe` | mktcap÷NI — เลือก period NI ให้ตรง multiple ที่ต้องการ |
+| `total_payout_ratio` | companion pe `payout` | รวม buyback (low-dividend reinvestor) |
+| `after_tax_op_margin` · `cash_conversion` · `fcf_yield` | context / cross-check | |
+
+Output keys: 13 metrics ข้างบน + `missing` (list field ที่ขาด) + `note`
+
+---
 
 ### Mode 1: `companion` — Justified Multiple จาก Companion Variable
 
@@ -210,14 +237,15 @@ Output keys: `pass_count`, `caution_count`, `red_count`, `red_flag_total`, `scre
 
 ## Workflow (เมื่อไม่มี subagent / slash command)
 
-บน platform ที่ไม่มี subagent ของ Claude Code ให้ทำ 4 สเต็ปนี้ในเซสชันเดียว:
+บน platform ที่ไม่มี subagent ของ Claude Code ให้ทำ 5 สเต็ปนี้ในเซสชันเดียว:
 
-1. **Screen** — ดึงข้อมูลจริงล่าสุด (10-K / 10-Q / IR) → กรอก 10 เกณฑ์ → รัน mode `screen` → อ่าน gate verdict + failed_list
-2. **Companion** — สำหรับแต่ละ Multiple ที่ใช้วิเคราะห์ Valuation → รัน mode `companion` (ทีละ multiple) → เทียบ actual vs justified
-3. **15 Categories** — เดิน 15 หมวดตาม `references/checklist-15.md` → กำหนด verdict (`pass` / `caution` / `red`) ทีละหมวด พร้อมเหตุผล + as-of date + source · ระบุ red_flags ที่พบ
-4. **Scorecard** — ส่ง verdicts ทั้ง 15 หมวด + red_flags + screen_result เข้า mode `scorecard` → อ่าน overall_read → ปิดท้ายด้วย 3 คำถามสุดท้าย (หมวด [15]) ก่อนสรุป
+1. **Derive** — ดึง raw financials (10-K / 10-Q / IR) → รัน mode `derive` → ได้ EV, EV/Sales, EV/EBITDA, P/B, P/E, FCF/Cash Conversion, eps_cagr, total_payout ฯลฯ · **ห้ามคำนวณ multiple/ratio ในหัว** (deterministic ข้าม platform)
+2. **Screen** — กรอก 10 เกณฑ์ (ใช้ค่าจาก derive: `net_debt_ebitda`, `fcf_conversion` ฯลฯ) → รัน mode `screen` → gate verdict + failed_list
+3. **Companion** — ป้อนค่าจาก derive (ev, ev_sales, pb, pe, eps_cagr→eps_growth_5y, total_payout→payout) เข้า mode `companion` ทีละ multiple → เทียบ actual vs justified
+4. **15 Categories** — เดิน 15 หมวดตาม `references/checklist-15.md` → กำหนด verdict (`pass` / `caution` / `red`) ทีละหมวด พร้อมเหตุผล + as-of date + source · ระบุ red_flags ที่พบ
+5. **Scorecard** — ส่ง verdicts ทั้ง 15 หมวด + red_flags + screen_result เข้า mode `scorecard` → อ่าน overall_read → ปิดท้ายด้วย 3 คำถามสุดท้าย (หมวด [15]) ก่อนสรุป
 
-> ข้อบังคับ: ไม่กุข้อมูล · Companion Variable ประกอบทุก Multiple · source + as-of date ทุกตัวเลข · AVOID = ไม่ดำเนินการต่อ
+> ข้อบังคับ: ไม่กุข้อมูล · **ตัวเลขคำนวณจาก `derive` ไม่คำนวณในหัว** · Companion Variable ประกอบทุก Multiple · source + as-of date ทุกตัวเลข · verdict หมวด = pass/caution/red เท่านั้น · AVOID = ไม่ดำเนินการต่อ
 
 ---
 
